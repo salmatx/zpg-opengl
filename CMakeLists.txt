@@ -27,3 +27,4 @@ add_executable(zpg
 target_link_libraries(zpg OpenGL::GL)
 target_link_libraries(zpg GLEW::GLEW)
 target_link_libraries(zpg glfw)
+target_link_libraries(zpg glm::glm)
