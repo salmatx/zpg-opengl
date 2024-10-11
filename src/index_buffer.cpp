@@ -2,26 +2,27 @@
 
 #include <GL/glew.h>
 
+#include "gl_common.h"
+
 namespace engine {
 IndexBuffer::IndexBuffer(const unsigned int* t_data, const unsigned int t_count)
 	: m_count(t_count) {
-	glGenBuffers(1, &m_renderer_ID);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_renderer_ID);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(*t_data) * t_count, t_data, GL_DYNAMIC_DRAW);
-	GLsizeiptr num_indices;
+	GLCall(glGenBuffers(1, &m_renderer_ID));
+	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_renderer_ID));
+	GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(*t_data) * t_count, t_data, GL_DYNAMIC_DRAW));
 }
 
 IndexBuffer::~IndexBuffer() {
-	glDeleteBuffers(1, &m_renderer_ID);
+	GLCall(glDeleteBuffers(1, &m_renderer_ID));
 }
 
 void IndexBuffer::Bind() const {
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_renderer_ID);
+	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_renderer_ID));
 
 }
 
 void IndexBuffer::Unbind() const {
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 
 }
 }

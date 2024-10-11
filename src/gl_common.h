@@ -1,6 +1,10 @@
 #pragma once
 
-#define ASSERTATION_ENABLED 1
+#ifdef ASSERTATION_ENABLED
+#else
+#define ASSERTATION_ENABLED 0
+#endif
+
 #if ASSERTATION_ENABLED == 1
 
 #define debugBreak() __builtin_trap()
@@ -22,10 +26,13 @@
 
 #endif
 
+#include <string>
+
 namespace engine {
 
 void GLClearError();
-bool GLCallLog(const char* function, const char* file, int line);
+bool GLCallLog(const char* t_function, const char* t_file, int t_line);
+std::string GetGLErrorName(unsigned int t_error_code);
 
 }
 

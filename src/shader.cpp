@@ -6,6 +6,8 @@
 #include <sstream>
 #include <GL/glew.h>
 
+#include "gl_common.h"
+
 namespace engine {
 Shader::Shader(const std::string& t_filepath)
 	: m_filepath(t_filepath) {
@@ -14,20 +16,20 @@ Shader::Shader(const std::string& t_filepath)
 }
 
 Shader::~Shader() {
-	glDeleteProgram(m_rendered_ID);
+	GLCall(glDeleteProgram(m_rendered_ID));
 }
 
 void Shader::Bind() const {
-	glUseProgram(m_rendered_ID);
+	GLCall(glUseProgram(m_rendered_ID));
 }
 
 void Shader::Unbind() const {
-	glUseProgram(0);
+	GLCall(glUseProgram(0));
 }
 
 void Shader::SetUniform4f(const std::string& t_name, float t_v0, float t_v1, float t_v2, float t_v3) {
-	const int location = this->GetUniformLocation(t_name);
-	glUniform4f(location, t_v0, t_v1, t_v2, t_v3);
+	GLCall(const int location = this->GetUniformLocation(t_name));
+	GLCall(glUniform4f(location, t_v0, t_v1, t_v2, t_v3));
 }
 
 int Shader::GetUniformLocation(const std::string& t_name) {
@@ -35,7 +37,7 @@ int Shader::GetUniformLocation(const std::string& t_name) {
 		return m_uniform_location_cache.at(t_name);
 	}
 
-	const int location = glGetUniformLocation(m_rendered_ID, t_name.c_str());
+	GLCall(const int location = glGetUniformLocation(m_rendered_ID, t_name.c_str()));
 	if (location == -1) {
 		std::cerr << "Failed to get uniform location " << t_name << std::endl;
 	}
@@ -45,10 +47,10 @@ int Shader::GetUniformLocation(const std::string& t_name) {
 }
 
 std::optional<unsigned int> Shader::CompileShader(const unsigned int t_type, const std::string& t_source) {
-	unsigned int vertex_shader_ID = glCreateShader(t_type);
+	GLCall(unsigned int vertex_shader_ID = glCreateShader(t_type));
 	const char* src = t_source.c_str();
-	glShaderSource(vertex_shader_ID, 1, &src, nullptr);
-	glCompileShader(vertex_shader_ID);
+	GLCall(glShaderSource(vertex_shader_ID, 1, &src, nullptr));
+	GLCall(glCompileShader(vertex_shader_ID));
 
 	int result;
 	glGetShaderiv(vertex_shader_ID, GL_COMPILE_STATUS, &result);
@@ -67,17 +69,17 @@ std::optional<unsigned int> Shader::CompileShader(const unsigned int t_type, con
 }
 
 unsigned int Shader::CreateShader(const std::string& t_vertex_shader, const std::string& t_fragment_shader) {
-	unsigned int shader_program = glCreateProgram();
+	GLCall(unsigned int shader_program = glCreateProgram());
 	auto vertex_shader = this->CompileShader(GL_VERTEX_SHADER, t_vertex_shader);
 	auto fragment_shader = this->CompileShader(GL_FRAGMENT_SHADER, t_fragment_shader);
 
-	glAttachShader(shader_program, vertex_shader.value());
-	glAttachShader(shader_program, fragment_shader.value());
-	glLinkProgram(shader_program);
-	glValidateProgram(shader_program);
+	GLCall(glAttachShader(shader_program, vertex_shader.value()));
+	GLCall(glAttachShader(shader_program, fragment_shader.value()));
+	GLCall(glLinkProgram(shader_program));
+	GLCall(glValidateProgram(shader_program));
 
-	glDeleteShader(vertex_shader.value());
-	glDeleteShader(fragment_shader.value());
+	GLCall(glDeleteShader(vertex_shader.value()));
+	GLCall(glDeleteShader(fragment_shader.value()));
 
 	return shader_program;
 }
