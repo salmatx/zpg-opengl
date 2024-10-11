@@ -21,8 +21,7 @@ set (source_dir "${PROJECT_SOURCE_DIR}/src")
 
 file(GLOB source_files "${source_dir}/*.cpp")
 
-add_executable(zpg
-        src/main.cpp)
+add_executable(zpg ${source_files})
 
 target_link_libraries(zpg OpenGL::GL)
 target_link_libraries(zpg GLEW::GLEW)
