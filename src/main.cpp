@@ -34,13 +34,25 @@ void PrintOpenGLInfo() {
 	printf("Using GLFW %i.%i.%i\n", major, minor, revision);
 }
 
-float points[] = {
-	0.0f, 0.5f, 0.0f,
-	0.5f, -0.5f, 0.0f,
-    -0.5f, -0.5f, 0.0f
+float points_rectangle[] = {
+	-1.0f, -1.0f, 0.0f,    1.0f, 0.0f, 0.0f, 1.0f,
+	-0.5f, -1.0f, 0.0f,    0.0f, 1.0f, 0.0f, 1.0f,
+	-0.5f, -0.5f, 0.0f,    0.0f, 0.0f, 1.0f, 1.0f,
+	-1.0f, -0.5f, 0.0f,    1.0f, 1.0f, 0.0f, 1.0f
 };
 
-unsigned int indices[] = {
+float points_triangle[] = {
+     0.0f, -0.5f, 0.0f,
+	 0.5f, -0.5f, 0.0f,
+	 0.5f,  0.5f, 0.0f
+};
+
+unsigned int indices_rectangle[] = {
+	0, 1, 2,
+	0, 2, 3
+};
+
+unsigned int indices_triangle[] = {
 	0, 1, 2
 };
 
@@ -60,38 +72,41 @@ glm::mat4 View = glm::lookAt(
 glm::mat4 Model = glm::mat4(1.0f);
 
 
-int main()
-{
+int main() {
 	engine::Window window(800, 600, "ZPG");
 	window.InitWindow();
-
 	PrintOpenGLInfo();
-
 	window.SetKeyCallbacks();
 
 	engine::VertexArray vao;
-	engine::VertexBuffer vbo(points, sizeof(points));
+	engine::VertexBuffer vbo(points_rectangle, sizeof(points_rectangle));
 	engine::VertexBufferLayout layout;
 	layout.Push<float>(3);
+	layout.Push<float>(4);
 	vao.AddBuffer(vbo, layout);
+	engine::IndexBuffer ibo(indices_rectangle, std::size(indices_rectangle));
 
-	engine::IndexBuffer ibo(indices, std::size(indices));
+	engine::VertexArray vao1;
+	engine::VertexBuffer vbo1(points_triangle, sizeof(points_triangle));
+	engine::VertexBufferLayout layout1;
+	layout1.Push<float>(3);
+	vao1.AddBuffer(vbo1, layout1);
+	engine::IndexBuffer ibo1(indices_triangle, std::size(indices_triangle));
 
-	engine::Shader shader("../res/shaders/basic.glsl");
-	shader.Bind();
-	shader.SetUniform4f("u_Color", 0.0f, 0.0f, 1.0f, 1.0f);
+	engine::Shader shader_basic("../res/shaders/basic.glsl");
+	shader_basic.Bind();
+	shader_basic.SetUniform4f("u_Color", 0.0f, 0.0f, 1.0f, 1.0f);
 
-	vao.Unbind();
-	vbo.Unbind();
-	ibo.Unbind();
-	shader.Unbind();
+	engine::Shader shader_gradient("../res/shaders/gradient.glsl");
+	shader_gradient.Bind();
 
 	engine::Renderer renderer;
 
 	while (window.RenderLoop()) {
 		renderer.Clear();
 
-		renderer.Draw(vao, ibo, shader);
+		renderer.Draw(vao, ibo, shader_gradient);
+		renderer.Draw(vao1, ibo1, shader_basic);
 
 		// update other events like input handling
 		window.PollEvents();
