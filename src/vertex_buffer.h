@@ -1,4 +1,6 @@
 #pragma once
+#include <iterator>
+
 #include "i_bind.h"
 
 namespace engine {
@@ -10,9 +12,11 @@ public:
 
     void Bind() const override;
     void Unbind() const override;
+    [[nodiscard]] inline unsigned int GetSize() const { return m_size; }
 
 private:
     unsigned int m_renderer_ID;
+    unsigned int m_size;
 };
 
 }

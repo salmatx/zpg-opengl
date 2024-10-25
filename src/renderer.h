@@ -12,6 +12,7 @@ public:
 	~Renderer() = default;
 
 	void Draw(const VertexArray& t_vao, const IndexBuffer& t_ibo, const Shader& t_shader) const;
+	void Draw(const VertexArray& t_vao, const Shader& t_shader) const;
 	void Clear() const;
 };
 
