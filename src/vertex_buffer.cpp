@@ -1,7 +1,5 @@
+#include "epch.h"
 #include "vertex_buffer.h"
-
-#include <GL/glew.h>
-
 #include "gl_common.h"
 
 namespace engine {

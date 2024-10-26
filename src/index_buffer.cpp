@@ -1,6 +1,5 @@
+#include "epch.h"
 #include "index_buffer.h"
-
-#include <GL/glew.h>
 
 #include "gl_common.h"
 

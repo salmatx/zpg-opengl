@@ -1,7 +1,4 @@
 #pragma once
-#include <optional>
-#include <string>
-#include <unordered_map>
 
 #include "i_bind.h"
 
@@ -20,6 +17,7 @@ public:
 	void Bind() const;
 	void Unbind() const;
 	void SetUniform4f(const std::string& t_name, float t_v0, float t_v1, float t_v2, float t_v3);
+	void SetUniformMat4f(const std::string& t_name, const glm::mat4& t_matrix);
 
 private:
 	int GetUniformLocation(const std::string& t_name);

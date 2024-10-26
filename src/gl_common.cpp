@@ -1,8 +1,6 @@
+#include "epch.h"
 #include "gl_common.h"
 
-#include <GL/glew.h>
-
-#include <iostream>
 
 namespace engine {
 void GLClearError()

@@ -1,7 +1,4 @@
 #pragma once
-#include <ranges>
-#include <vector>
-#include <GL/glew.h>
 
 namespace engine {
 

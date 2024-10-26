@@ -1,11 +1,5 @@
+#include "epch.h"
 #include "shader.h"
-
-#include <fstream>
-#include <iostream>
-#include <memory>
-#include <sstream>
-#include <GL/glew.h>
-
 #include "gl_common.h"
 
 namespace engine {
@@ -30,6 +24,10 @@ void Shader::Unbind() const {
 void Shader::SetUniform4f(const std::string& t_name, float t_v0, float t_v1, float t_v2, float t_v3) {
 	GLCall(const int location = this->GetUniformLocation(t_name));
 	GLCall(glUniform4f(location, t_v0, t_v1, t_v2, t_v3));
+}
+
+void Shader::SetUniformMat4f(const std::string& t_name, const glm::mat4& t_matrix) {
+	GLCall(glUniformMatrix4fv(this->GetUniformLocation(t_name), 1, GL_FALSE, &t_matrix[0][0]));
 }
 
 int Shader::GetUniformLocation(const std::string& t_name) {

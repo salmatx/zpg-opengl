@@ -1,5 +1,5 @@
+#include "epch.h"
 #include "vertex_array.h"
-
 #include "gl_common.h"
 
 namespace engine {

@@ -1,8 +1,5 @@
+#include "epch.h"
 #include "window.h"
-
-#include <cstdio>
-#include <cstdlib>
-#include <utility>
 
 namespace engine {
 void Window::ErrorCallback(int t_error, const char* t_description) {

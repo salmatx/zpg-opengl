@@ -26,8 +26,6 @@
 
 #endif
 
-#include <string>
-
 namespace engine {
 
 void GLClearError();
