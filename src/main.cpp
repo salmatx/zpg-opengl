@@ -1,11 +1,17 @@
 #include "epch.h"
 #include "gl_common.h"
 #include "index_buffer.h"
-#include "renderer.h"
+#include "drawable_object.h"
 #include "vertex_buffer.h"
-#include "vertex_array.h"
+#include "model.h"
+#include "model_rotate.h"
+#include "model_scale.h"
+#include "model_translate.h"
 #include "shader.h"
 #include "window.h"
+
+#include "tree.h"
+#include "sphere.h"
 
 void PrintOpenGLInfo() {
 	printf("OpenGL Version: %s\n", glGetString(GL_VERSION));
@@ -18,26 +24,9 @@ void PrintOpenGLInfo() {
 	printf("Using GLFW %i.%i.%i\n", major, minor, revision);
 }
 
-float points_rectangle[] = {
-	-1.0f, -1.0f, 0.0f,    1.0f, 0.0f, 0.0f, 1.0f,
-	-0.5f, -1.0f, 0.0f,    0.0f, 1.0f, 0.0f, 1.0f,
-	-0.5f, -0.5f, 0.0f,    0.0f, 0.0f, 1.0f, 1.0f,
-	-1.0f, -0.5f, 0.0f,    1.0f, 1.0f, 0.0f, 1.0f
-};
-
-float points_triangle[] = {
-     0.0f, -0.5f, 0.0f,
-	 0.5f, -0.5f, 0.0f,
-	 0.5f,  0.5f, 0.0f
-};
-
-unsigned int indices_rectangle[] = {
-	0, 1, 2,
-	0, 2, 3
-};
-
-unsigned int indices_triangle[] = {
-	0, 1, 2
+glm::vec3 positions[] = {
+	glm::vec3( 0.0f,  0.0f,  0.0f),
+	glm::vec3( 2.0f,  1.0f, -5.0f)
 };
 
 //GLM test
@@ -52,9 +41,6 @@ glm::mat4 View = glm::lookAt(
 	glm::vec3(0, 0, 0), // and looks at the origin
 	glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
 );
-// Model matrix : an identity matrix (model will be at the origin)
-glm::mat4 Model = glm::mat4(1.0f);
-
 
 int main() {
 	engine::Window window(800, 600, "ZPG");
@@ -62,35 +48,58 @@ int main() {
 	PrintOpenGLInfo();
 	window.SetKeyCallbacks();
 
-	engine::VertexArray vao;
-	engine::VertexBuffer vbo(points_rectangle, sizeof(points_rectangle));
-	engine::VertexBufferLayout layout;
-	layout.Push<float>(3);
-	layout.Push<float>(4);
-	vao.AddBuffer(vbo, layout);
-	engine::IndexBuffer ibo(indices_rectangle, std::size(indices_rectangle));
 
-	engine::VertexArray vao1;
-	engine::VertexBuffer vbo1(points_triangle, sizeof(points_triangle));
-	engine::VertexBufferLayout layout1;
-	layout1.Push<float>(3);
-	vao1.AddBuffer(vbo1, layout1);
-	engine::IndexBuffer ibo1(indices_triangle, std::size(indices_triangle));
+	// engine::Model vao(tree, sizeof(tree));
+	// vao.SetLayout(float{}, 3, float{}, 3);
+	// vao.InitModel();
 
 	engine::Shader shader_basic("../res/shaders/basic.glsl");
 	shader_basic.Bind();
-	shader_basic.SetUniform4f("u_Color", 0.0f, 0.0f, 1.0f, 1.0f);
 
-	engine::Shader shader_gradient("../res/shaders/gradient.glsl");
-	shader_gradient.Bind();
+	engine::DrawableObject renderer(tree, sizeof(tree), float{}, 3, float{}, 3);
 
-	engine::Renderer renderer;
+	// Model matrix : an identity matrix (model will be at the origin)
+	glm::mat4 M = glm::mat4(1.0f);
+
+	float alpha = 0;
+	// std::vector<float> alpha;
+	// for (int i = 0; i < 10; i++) {
+	// 	alpha.push_back(i * 100.0f);
+	// }
+
+	GLint matrixID;
+	glEnable(GL_DEPTH_TEST); //Z-buffer
 
 	while (window.RenderLoop()) {
 		renderer.Clear();
 
-		renderer.Draw(vao, ibo, shader_gradient);
-		renderer.Draw(vao1, ibo1, shader_basic);
+
+		M = glm::lookAt(glm::vec3(5.0f,10.0f,0.0f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f));
+		shader_basic.SetUniformMat4f("u_view_matrix", M);
+
+		M = glm::perspective(45.0f, 800.f / 600.f, 0.1f, 100.0f);
+		shader_basic.SetUniformMat4f("u_project_matrix", M);
+
+		alpha += 1.0f;
+		renderer.AddTransformation({
+			std::make_unique<engine::ModelRotate>(alpha, glm::vec3(0.0f, 1.0f, 0.0f)),
+			std::make_unique<engine::ModelTranslate>(positions[0]),
+			std::make_unique<engine::ModelScale>(glm::vec3(1.0f, 1.0f, 1.0f)),
+			});
+		renderer.AddTransformation({
+			std::make_unique<engine::ModelRotate>(-alpha, glm::vec3(0.0f, 1.0f, 0.0f)),
+			std::make_unique<engine::ModelTranslate>(positions[0]),
+			std::make_unique<engine::ModelScale>(glm::vec3(1.0f, 1.0f, 1.0f)),
+			});
+		renderer.Draw(shader_basic);
+
+		// M = glm::rotate(glm::mat4(1.0f), alpha, glm::vec3(0.0f, 1.0f, 1.0f));
+		// shader_basic.SetUniformMat4f("u_model_matrix", M);
+		// renderer.Draw(vao, shader_basic);
+
+		// M = glm::rotate(glm::mat4(1.0f), -alpha, glm::vec3(0.0f, 0.0f, 1.0f));
+		// shader_basic.SetUniformMat4f("u_model_matrix", M);
+		// renderer.Draw(shader_basic);
 
 		// update other events like input handling
 		window.PollEvents();

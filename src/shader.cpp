@@ -27,7 +27,7 @@ void Shader::SetUniform4f(const std::string& t_name, float t_v0, float t_v1, flo
 }
 
 void Shader::SetUniformMat4f(const std::string& t_name, const glm::mat4& t_matrix) {
-	GLCall(glUniformMatrix4fv(this->GetUniformLocation(t_name), 1, GL_FALSE, &t_matrix[0][0]));
+	GLCall(glUniformMatrix4fv(this->GetUniformLocation(t_name), 1, GL_FALSE, glm::value_ptr(t_matrix)));
 }
 
 int Shader::GetUniformLocation(const std::string& t_name) {

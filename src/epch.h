@@ -12,6 +12,7 @@
 #include <ranges>
 #include <vector>
 #include <utility>
+#include <type_traits>
 
 //Include GLEW
 #include <GL/glew.h>

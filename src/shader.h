@@ -1,6 +1,7 @@
 #pragma once
 
 #include "i_bind.h"
+#include "i_shader.h"
 
 namespace engine {
 
@@ -9,15 +10,15 @@ struct ShaderProgramSource {
 	std::string fragment_source;
 };
 
-class Shader : public IBind {
+class Shader : public IShader {
 public:
 	explicit Shader(const std::string& t_filepath);
 	~Shader();
 
-	void Bind() const;
-	void Unbind() const;
-	void SetUniform4f(const std::string& t_name, float t_v0, float t_v1, float t_v2, float t_v3);
-	void SetUniformMat4f(const std::string& t_name, const glm::mat4& t_matrix);
+	void Bind() const override;
+	void Unbind() const override;
+	void SetUniform4f(const std::string& t_name, float t_v0, float t_v1, float t_v2, float t_v3) override;
+	void SetUniformMat4f(const std::string& t_name, const glm::mat4& t_matrix) override;
 
 private:
 	int GetUniformLocation(const std::string& t_name);

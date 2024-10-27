@@ -28,6 +28,7 @@ endif()
 
 add_compile_options(-Wall -Wextra -pedantic)
 
+include_directories("${PROJECT_SOURCE_DIR}/res/models")
 
 add_executable(zpg ${source_files})
 
