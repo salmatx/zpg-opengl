@@ -32,8 +32,7 @@ glm::vec3 positions[] = {
 //GLM test
 
 // Projection matrix : 45� Field of View, 4:3 ratio, display range : 0.1unit <-> 100 units
-glm::mat4 Projection = glm::perspective(45.0f, 4.0f / 3.0f, 0.01f,
-100.0f);
+glm::mat4 Projection = glm::perspective(45.0f, 4.0f / 3.0f, 0.01f, 100.0f);
 
 // Camera matrix
 glm::mat4 View = glm::lookAt(
@@ -43,18 +42,25 @@ glm::mat4 View = glm::lookAt(
 );
 
 int main() {
-	engine::Window window(800, 600, "ZPG");
-	window.InitWindow();
+	int width = 800;
+	int height = 600;
+
+	engine::Window window(width, height, "ZPG");
 	PrintOpenGLInfo();
 	window.SetKeyCallbacks();
+
+	engine::Camera camera(window, width, height,
+		{0.1f, 100.0f},
+		{glm::vec3(5.0f,10.0f,0.0f), glm::vec3(1.0f,0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f)});
 
 
 	// engine::Model vao(tree, sizeof(tree));
 	// vao.SetLayout(float{}, 3, float{}, 3);
 	// vao.InitModel();
 
-	engine::Shader shader_basic("../res/shaders/basic.glsl");
+	engine::Shader shader_basic(camera, "../res/shaders/basic.glsl");
 	shader_basic.Bind();
+	camera.InitCamera();
 
 	engine::DrawableObject renderer(tree, sizeof(tree), float{}, 3, float{}, 3);
 
@@ -73,12 +79,11 @@ int main() {
 	while (window.RenderLoop()) {
 		renderer.Clear();
 
-
-		M = glm::lookAt(glm::vec3(5.0f,10.0f,0.0f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f));
-		shader_basic.SetUniformMat4f("u_view_matrix", M);
-
-		M = glm::perspective(45.0f, 800.f / 600.f, 0.1f, 100.0f);
-		shader_basic.SetUniformMat4f("u_project_matrix", M);
+		// M = glm::lookAt(glm::vec3(5.0f,10.0f,0.0f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f));
+		// shader_basic.SetUniformMat4f("u_view_matrix", M);
+		//
+		// M = glm::perspective(45.0f, 800.f / 600.f, 0.1f, 100.0f);
+		// shader_basic.SetUniformMat4f("u_project_matrix", M);
 
 		alpha += 1.0f;
 		renderer.AddTransformation({

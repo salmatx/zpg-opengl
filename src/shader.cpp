@@ -3,10 +3,13 @@
 #include "gl_common.h"
 
 namespace engine {
-Shader::Shader(const std::string& t_filepath)
-	: m_filepath(t_filepath) {
+Shader::Shader(Camera& t_camera, const std::string& t_filepath)
+	: m_camera(t_camera),
+	m_filepath(t_filepath) {
 	ShaderProgramSource source = this->ParseShader(t_filepath);
 	m_rendered_ID = this->CreateShader(source.vertex_source, source.fragment_source);
+
+	m_camera.Attach(this);
 }
 
 Shader::~Shader() {
@@ -28,6 +31,15 @@ void Shader::SetUniform4f(const std::string& t_name, float t_v0, float t_v1, flo
 
 void Shader::SetUniformMat4f(const std::string& t_name, const glm::mat4& t_matrix) {
 	GLCall(glUniformMatrix4fv(this->GetUniformLocation(t_name), 1, GL_FALSE, glm::value_ptr(t_matrix)));
+}
+
+void Shader::Update(const glm::mat4& t_projection, const glm::mat4& t_view) {
+	SetUniformMat4f("u_project_matrix", t_projection);
+	SetUniformMat4f("u_view_matrix", t_view);
+}
+
+void Shader::RemoveObservation() {
+	m_camera.Detach(this);
 }
 
 int Shader::GetUniformLocation(const std::string& t_name) {

@@ -13,6 +13,7 @@
 #include <vector>
 #include <utility>
 #include <type_traits>
+#include <list>
 
 //Include GLEW
 #include <GL/glew.h>
