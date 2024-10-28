@@ -12,8 +12,28 @@ Shader::Shader(Camera& t_camera, const std::string& t_filepath)
 	m_camera.Attach(this);
 }
 
+Shader::Shader(const Shader& t_other)
+	: m_rendered_ID(t_other.m_rendered_ID),
+	m_camera(t_other.m_camera),
+	m_filepath(t_other.m_filepath),
+	m_uniform_location_cache(t_other.m_uniform_location_cache) {
+	ShaderProgramSource source = this->ParseShader(m_filepath);
+
+	m_camera.Attach(this);
+}
+
+Shader& Shader::operator=(const Shader& t_other) {
+	Shader tmp(t_other);
+	std::swap(m_filepath, tmp.m_filepath);
+	std::swap(m_rendered_ID, tmp.m_rendered_ID);
+	std::swap(m_uniform_location_cache, tmp.m_uniform_location_cache);
+
+	return *this;
+}
+
 Shader::~Shader() {
 	GLCall(glDeleteProgram(m_rendered_ID));
+	m_camera.Detach(this);
 }
 
 void Shader::Bind() const {

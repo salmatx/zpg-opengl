@@ -7,4 +7,8 @@ ModelScale::ModelScale(const glm::vec3& t_scale)
 glm::mat4 ModelScale::Transform(const glm::mat4& t_model) const {
 	return glm::scale(t_model, m_scale);
 }
+
+std::unique_ptr<ModelTransformation> ModelScale::Clone() const {
+	return std::make_unique<ModelScale>(*this);
+}
 }

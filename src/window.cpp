@@ -1,6 +1,8 @@
 #include "epch.h"
 #include "window.h"
 
+#include "gl_common.h"
+
 namespace engine {
 float Window::m_last_frame = 0.0f;
 float Window::m_time_per_frame = 0.0f;
@@ -115,6 +117,7 @@ void Window::SwapBuffers() const {
 }
 
 bool Window::RenderLoop() const {
+	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 	Window::GetTime();
 	return !glfwWindowShouldClose(m_window);
 }

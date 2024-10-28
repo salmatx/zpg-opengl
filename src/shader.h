@@ -14,6 +14,8 @@ struct ShaderProgramSource {
 class Shader : public IShader, public ICameraObserver {
 public:
 	Shader(Camera& t_camera, const std::string& t_filepath);
+	Shader(const Shader& t_other);
+	Shader& operator=(const Shader& t_other);
 	~Shader();
 
 	void Bind() const override;

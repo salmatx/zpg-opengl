@@ -9,6 +9,7 @@ public:
 	~ModelRotate() override = default;
 
 	[[nodiscard]] glm::mat4 Transform(const glm::mat4& t_model) const override;
+	[[nodiscard]] std::unique_ptr<ModelTransformation> Clone() const override;
 
 private:
 	float m_angle;

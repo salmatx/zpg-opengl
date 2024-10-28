@@ -16,6 +16,9 @@ public:
 		m_model.InitModel();
 	}
 
+	DrawableObject(const DrawableObject& t_other);
+	DrawableObject& operator=(const DrawableObject& t_other);
+
 	~DrawableObject() = default;
 
 	void AddTransformation(std::unique_ptr<ModelTransformation> (& t_transformation)[3]);

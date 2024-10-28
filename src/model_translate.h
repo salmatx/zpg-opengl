@@ -9,6 +9,7 @@ public:
 	~ModelTranslate() override = default;
 
 	[[nodiscard]] glm::mat4 Transform(const glm::mat4& model) const override;
+	[[nodiscard]] std::unique_ptr<ModelTransformation> Clone() const override;
 
 private:
 	glm::vec3 m_translation;

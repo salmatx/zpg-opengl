@@ -54,9 +54,6 @@ int main() {
 		{glm::vec3(5.0f,10.0f,0.0f), glm::vec3(1.0f,0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f)});
 
 
-	// engine::Model vao(tree, sizeof(tree));
-	// vao.SetLayout(float{}, 3, float{}, 3);
-	// vao.InitModel();
 
 	engine::Shader shader_basic(camera, "../res/shaders/basic.glsl");
 	shader_basic.Bind();
@@ -74,7 +71,7 @@ int main() {
 	// }
 
 	GLint matrixID;
-	glEnable(GL_DEPTH_TEST); //Z-buffer
+	 //Z-buffer
 
 	while (window.RenderLoop()) {
 		renderer.Clear();

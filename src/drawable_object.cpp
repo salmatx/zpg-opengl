@@ -4,6 +4,22 @@
 #include "model_translate.h"
 
 namespace engine {
+DrawableObject::DrawableObject(const DrawableObject& t_other)
+	: m_model(t_other.m_model) {
+	m_transformations.reserve(t_other.m_transformations.size());
+	for (const auto& transformation : t_other.m_transformations) {
+		m_transformations.emplace_back(transformation->Clone());
+	}
+}
+
+DrawableObject& DrawableObject::operator=(const DrawableObject& t_other) {
+	DrawableObject tmp(t_other);
+	std::swap(m_model, tmp.m_model);
+	std::swap(m_transformations, tmp.m_transformations);
+
+	return *this;
+}
+
 void DrawableObject::AddTransformation(std::unique_ptr<ModelTransformation> (& t_transformation)[3]) {
 	int size = 3;
 	for (unsigned int i = 0; i < size; ++i) {
@@ -44,7 +60,7 @@ void DrawableObject::Draw(const IndexBuffer& t_ibo, const Shader& t_shader) cons
 /// Draw whole array without using indices
 /// @param t_shader
 void DrawableObject::Draw(const Shader& t_shader) const {
-	auto shader = t_shader;
+	auto shader{t_shader};
 	shader.Bind();
 	m_model.Bind();
 
@@ -62,10 +78,7 @@ void DrawableObject::Draw(const Shader& t_shader) const {
 	}
 }
 
-
 void DrawableObject::Clear() {
-	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-
 	m_transformations.clear();
 }
 }

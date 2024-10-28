@@ -124,6 +124,7 @@ void Camera::Update(EventType t_event, std::shared_ptr<const void> t_event_data)
 }
 
 void Camera::InitCamera() {
+	glEnable(GL_DEPTH_TEST);
 	Notify();
 }
 
