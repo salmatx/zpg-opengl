@@ -7,6 +7,8 @@ namespace engine {
 class Model : public IBind{
 public:
 	Model(const void* t_vb, const unsigned int t_size);
+	Model(const Model& t_other) = delete;
+	Model& operator=(const Model& t_other) = delete;
 	~Model();
 
 	void InitModel();
@@ -36,7 +38,7 @@ private:
 	unsigned int m_renderer_ID;
 	unsigned int m_count = 0;
 	VertexBufferLayout m_layout;
-	VertexBuffer m_vertex_buffer;
+	std::shared_ptr<VertexBuffer> m_vertex_buffer;
 };
 
 }

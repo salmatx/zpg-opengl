@@ -4,36 +4,16 @@
 
 namespace engine {
 Shader::Shader(Camera& t_camera, const std::string& t_filepath)
-	: m_camera(t_camera),
+	: m_camera(&t_camera),
 	m_filepath(t_filepath) {
 	ShaderProgramSource source = this->ParseShader(t_filepath);
 	m_rendered_ID = this->CreateShader(source.vertex_source, source.fragment_source);
 
-	m_camera.Attach(this);
-}
-
-Shader::Shader(const Shader& t_other)
-	: m_rendered_ID(t_other.m_rendered_ID),
-	m_camera(t_other.m_camera),
-	m_filepath(t_other.m_filepath),
-	m_uniform_location_cache(t_other.m_uniform_location_cache) {
-	ShaderProgramSource source = this->ParseShader(m_filepath);
-
-	m_camera.Attach(this);
-}
-
-Shader& Shader::operator=(const Shader& t_other) {
-	Shader tmp(t_other);
-	std::swap(m_filepath, tmp.m_filepath);
-	std::swap(m_rendered_ID, tmp.m_rendered_ID);
-	std::swap(m_uniform_location_cache, tmp.m_uniform_location_cache);
-
-	return *this;
+	m_camera->Attach(this);
 }
 
 Shader::~Shader() {
 	GLCall(glDeleteProgram(m_rendered_ID));
-	m_camera.Detach(this);
 }
 
 void Shader::Bind() const {
@@ -54,12 +34,13 @@ void Shader::SetUniformMat4f(const std::string& t_name, const glm::mat4& t_matri
 }
 
 void Shader::Update(const glm::mat4& t_projection, const glm::mat4& t_view) {
+	Bind();
 	SetUniformMat4f("u_project_matrix", t_projection);
 	SetUniformMat4f("u_view_matrix", t_view);
 }
 
 void Shader::RemoveObservation() {
-	m_camera.Detach(this);
+	m_camera->Detach(this);
 }
 
 int Shader::GetUniformLocation(const std::string& t_name) {

@@ -32,7 +32,7 @@ public:
   void RemoveObservation(EventType t_event);
 
 private:
-  Window& m_window;
+  Window* m_window;
   std::list<ICameraObserver*> m_observers;
   glm::mat4 m_projection;
   glm::mat4 m_view;

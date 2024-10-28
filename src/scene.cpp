@@ -6,26 +6,23 @@
 #include "model_translate.h"
 
 namespace engine {
-Scene::Scene(std::shared_ptr<Camera> t_camera)
-	: m_camera(std::move(t_camera)) {}
+Scene::Scene(Camera& t_camera)
+	: m_camera(&t_camera) {}
 
 void Scene::DrawScene() {
 	for (const auto& [key, value] : m_objects) {
-		value.Draw(*m_current_shader);
+		value->Draw(m_current_shader);
 	}
 }
 
 void Scene::ClearScene() {
 	for (auto& [key, value] : m_objects) {
-		value.Clear();
+		value->Clear();
 	}
 }
 
 void Scene::AddObject(const std::string& t_name, const DrawableObject& t_drawable_object) {
-	auto [iter, inserted] = m_objects.emplace(t_name, t_drawable_object);
-	if (!inserted) {
-		iter->second = t_drawable_object;
-	}
+	m_objects.emplace(t_name, std::make_unique<DrawableObject>(t_drawable_object));
 }
 
 bool Scene::RemoveObject(const std::string& t_name) {
@@ -45,11 +42,11 @@ void Scene::AddTransformation(const std::string& t_name, const Transformation& t
 
 	switch (mode) {
 	case TransformationOrder::TRS:
-		m_objects.at(t_name).AddTransformation({std::move(translate), std::move(rotate), std::move(scale)});
+		m_objects.at(t_name)->AddTransformation({std::move(translate), std::move(rotate), std::move(scale)});
 		break;
 
 	case TransformationOrder::RTS:
-		m_objects.at(t_name).AddTransformation({std::move(rotate), std::move(translate), std::move(scale)});
+		m_objects.at(t_name)->AddTransformation({std::move(rotate), std::move(translate), std::move(scale)});
 		break;
 
 	default:
@@ -57,11 +54,8 @@ void Scene::AddTransformation(const std::string& t_name, const Transformation& t
 	}
 }
 
-void Scene::AddShader(const std::string& t_name, const Shader& t_shader) {
-	auto [iter, inserted] = m_shaders.emplace(t_name, t_shader);
-	if (!inserted) {
-		iter->second = t_shader;
-	}
+void Scene::AddShader(const std::string& t_name, std::string t_path) {
+	m_shaders.emplace(t_name, std::make_shared<Shader>(*m_camera, t_path));
 }
 
 bool Scene::RemoveShader(const std::string& t_name) {
@@ -74,6 +68,6 @@ bool Scene::RemoveShader(const std::string& t_name) {
 }
 
 void Scene::SelectShader(const std::string& t_name) {
-	m_current_shader = &m_shaders.at(t_name);
+	m_current_shader = m_shaders.at(t_name);
 }
 }

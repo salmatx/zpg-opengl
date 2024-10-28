@@ -11,9 +11,9 @@ class DrawableObject {
 public:
 	template<typename... Args>
 	DrawableObject(const void* t_vb, const unsigned int t_size, Args&&... t_args)
-		: m_model(t_vb, t_size) {
-		m_model.SetLayout(t_args...);
-		m_model.InitModel();
+		: m_model(std::make_shared<Model>(t_vb, t_size)) {
+		m_model->SetLayout(t_args...);
+		m_model->InitModel();
 	}
 
 	DrawableObject(const DrawableObject& t_other);
@@ -23,12 +23,12 @@ public:
 
 	void AddTransformation(std::unique_ptr<ModelTransformation> (& t_transformation)[3]);
 	void AddTransformation(std::unique_ptr<ModelTransformation> (&& t_transformation)[3]);
-	void Draw(const IndexBuffer& t_ibo, const Shader& t_shader) const;
-	void Draw(const Shader& t_shader) const;
+	void Draw(const IndexBuffer& t_ibo, std::shared_ptr<Shader> t_shader) const;
+	void Draw(std::shared_ptr<Shader> t_shader) const;
 	void Clear();
 
 private:
-    Model m_model;
+    std::shared_ptr<Model> m_model;
 	std::vector<std::unique_ptr<ModelTransformation>> m_transformations;
 };
 

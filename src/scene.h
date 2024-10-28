@@ -18,7 +18,7 @@ struct Transformation {
 
 class Scene {
 public:
-	explicit Scene(std::shared_ptr<Camera> t_camera);
+	explicit Scene(Camera& t_camera);
 	~Scene() = default;
 
 	void DrawScene();
@@ -26,15 +26,15 @@ public:
 	void AddObject(const std::string& t_name, const DrawableObject& t_drawable_object);
 	bool RemoveObject(const std::string& t_name);
 	void AddTransformation(const std::string& t_name, const Transformation& t_transformation);
-	void AddShader(const std::string& t_name, const Shader& t_shader);
+	void AddShader(const std::string& t_name, std::string t_path);
 	bool RemoveShader(const std::string& t_name);
 	void SelectShader(const std::string& t_name);
 
 private:
-	std::unordered_map<std::string, DrawableObject> m_objects;
-	std::unordered_map<std::string, Shader> m_shaders;
-	std::shared_ptr<Camera> m_camera;
-	Shader* m_current_shader;
+	std::unordered_map<std::string, std::unique_ptr<DrawableObject>> m_objects;
+	std::unordered_map<std::string, std::shared_ptr<Shader>> m_shaders;
+	Camera* m_camera;
+	std::shared_ptr<Shader> m_current_shader;
 };
 
 }

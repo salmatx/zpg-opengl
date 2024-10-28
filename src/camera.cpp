@@ -2,7 +2,7 @@
 
 namespace engine {
 Camera::Camera(Window& t_window, int t_screen_width, int t_screen_height, CameraDepth t_depth, CameraPosition t_position)
-	: m_window(t_window),
+	: m_window(&t_window),
 	m_screen_width(t_screen_width),
 	m_screen_height(t_screen_height),
 	m_yaw(-90.0f),
@@ -20,10 +20,10 @@ Camera::Camera(Window& t_window, int t_screen_width, int t_screen_height, Camera
 		static_cast<float>(m_screen_width) / static_cast<float>(m_screen_height), m_near, m_far);
 	m_view = glm::lookAt(m_camera_position, m_camera_position + m_camera_front, m_camera_up);
 
-	m_window.Attach(EventType::key, this);
-	m_window.Attach(EventType::mouse, this);
-	m_window.Attach(EventType::scroll, this);
-	m_window.Attach(EventType::screen_size, this);
+	m_window->Attach(EventType::key, this);
+	m_window->Attach(EventType::mouse, this);
+	m_window->Attach(EventType::scroll, this);
+	m_window->Attach(EventType::screen_size, this);
 }
 
 void Camera::Attach(ICameraObserver* observer) {
@@ -72,7 +72,7 @@ void Camera::Update(EventType t_event, std::shared_ptr<const void> t_event_data)
 		}
 
 		float x_offset = x_pos - m_last_x;
-		float y_offset = y_pos - m_last_y;
+		float y_offset = m_last_y - y_pos;
 		m_last_x = x_pos;
 		m_last_y = y_pos;
 
@@ -129,6 +129,6 @@ void Camera::InitCamera() {
 }
 
 void Camera::RemoveObservation(EventType t_event) {
-	m_window.Detach(t_event, this);
+	m_window->Detach(t_event, this);
 }
 }

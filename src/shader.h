@@ -14,8 +14,8 @@ struct ShaderProgramSource {
 class Shader : public IShader, public ICameraObserver {
 public:
 	Shader(Camera& t_camera, const std::string& t_filepath);
-	Shader(const Shader& t_other);
-	Shader& operator=(const Shader& t_other);
+	Shader(const Shader& t_other) = delete;
+	Shader& operator=(const Shader& t_other) = delete;
 	~Shader();
 
 	void Bind() const override;
@@ -33,7 +33,7 @@ private:
 	std::optional<unsigned int> CompileShader(unsigned int t_type, const std::string& t_source);
 	unsigned int CreateShader(const std::string& t_vertex_shader, const std::string& t_fragment_shader);
 
-	Camera& m_camera;
+	Camera* m_camera;
 	unsigned int m_rendered_ID {0};
 	std::string m_filepath;
 	std::unordered_map<std::string, int> m_uniform_location_cache;

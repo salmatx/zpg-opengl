@@ -37,10 +37,9 @@ void DrawableObject::AddTransformation(std::unique_ptr<ModelTransformation>(&& t
 /// Draw array using indices
 /// @param t_ibo
 /// @param t_shader
-void DrawableObject::Draw(const IndexBuffer& t_ibo, const Shader& t_shader) const {
-	auto shader = t_shader;
-	shader.Bind();
-	m_model.Bind();
+void DrawableObject::Draw(const IndexBuffer& t_ibo, std::shared_ptr<Shader> t_shader) const {
+	t_shader->Bind();
+	m_model->Bind();
 	t_ibo.Bind();
 
 	glm::mat4 model = glm::mat4(1.0f);
@@ -48,9 +47,9 @@ void DrawableObject::Draw(const IndexBuffer& t_ibo, const Shader& t_shader) cons
 	for (const auto& transformation : m_transformations) {
 		count++;
 		model = transformation->Transform(model);
-		shader.SetUniformMat4f("u_model_matrix", model);
+		t_shader->SetUniformMat4f("u_model_matrix", model);
 		if (count == 3) {
-			GLCall(glDrawArrays(GL_TRIANGLES, 0, m_model.GetCount()));
+			GLCall(glDrawArrays(GL_TRIANGLES, 0, m_model->GetCount()));
 			model = glm::mat4(1.0f);
 			count = 0;
 		}
@@ -59,19 +58,18 @@ void DrawableObject::Draw(const IndexBuffer& t_ibo, const Shader& t_shader) cons
 
 /// Draw whole array without using indices
 /// @param t_shader
-void DrawableObject::Draw(const Shader& t_shader) const {
-	auto shader{t_shader};
-	shader.Bind();
-	m_model.Bind();
+void DrawableObject::Draw(std::shared_ptr<Shader> t_shader) const {
+	t_shader->Bind();
+	m_model->Bind();
 
 	glm::mat4 model = glm::mat4(1.0f);
 	int count = 0;
 	for (const auto& transformation : m_transformations) {
 		count++;
 		model = transformation->Transform(model);
-		shader.SetUniformMat4f("u_model_matrix", model);
+		t_shader->SetUniformMat4f("u_model_matrix", model);
 		if (count == 3) {
-			GLCall(glDrawArrays(GL_TRIANGLES, 0, m_model.GetCount()));
+			GLCall(glDrawArrays(GL_TRIANGLES, 0, m_model->GetCount()));
 			model = glm::mat4(1.0f);
 			count = 0;
 		}

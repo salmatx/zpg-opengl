@@ -7,6 +7,8 @@ namespace engine {
 class VertexBuffer : public IBind {
 public:
     VertexBuffer(const void* t_data, const unsigned int t_size);
+    VertexBuffer(const VertexBuffer& t_other) = delete;
+    VertexBuffer& operator=(const VertexBuffer& t_other) = delete;
     ~VertexBuffer();
 
     void Bind() const override;
