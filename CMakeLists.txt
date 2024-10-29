@@ -9,7 +9,7 @@ find_package(glm REQUIRED)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
 
-set (source_dir "${PROJECT_SOURCE_DIR}/src")
+set (source_dir "${PROJECT_SOURCE_DIR}/src/engine")
 
 file(GLOB source_files "${source_dir}/*.cpp")
 

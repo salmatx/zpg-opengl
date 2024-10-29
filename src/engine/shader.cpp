@@ -13,6 +13,7 @@ Shader::Shader(Camera& t_camera, const std::string& t_filepath)
 }
 
 Shader::~Shader() {
+	m_camera->Detach(this);
 	GLCall(glDeleteProgram(m_rendered_ID));
 }
 

@@ -26,6 +26,13 @@ Camera::Camera(Window& t_window, int t_screen_width, int t_screen_height, Camera
 	m_window->Attach(EventType::screen_size, this);
 }
 
+Camera::~Camera() {
+	m_window->Detach(EventType::key, this);
+	m_window->Detach(EventType::mouse, this);
+	m_window->Detach(EventType::scroll, this);
+	m_window->Detach(EventType::screen_size, this);
+}
+
 void Camera::Attach(ICameraObserver* observer) {
 	m_observers.emplace_back(observer);
 }

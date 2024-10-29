@@ -20,7 +20,7 @@ struct CameraPosition {
 class Camera : public ICameraSubject, public IWindowObserver {
 public:
   Camera(Window& t_window, int t_screen_width, int t_screen_height, CameraDepth t_depth, CameraPosition t_position);
-  ~Camera() override = default;
+  ~Camera() override;
 
   void Attach(ICameraObserver* observer) override;
   void Detach(ICameraObserver* observer) override;
