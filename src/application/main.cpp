@@ -1,10 +1,6 @@
 #include <random>
 
-#include "application.h"
-#include "epch.h"
-#include "drawable_object.h"
-#include "scene.h"
-#include "shader.h"
+#include "engine.h"
 
 #include "tree.h"
 #include "bushes.h"
