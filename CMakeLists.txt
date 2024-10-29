@@ -40,6 +40,11 @@ target_link_libraries(zpg PRIVATE
         glm::glm
 )
 
+target_include_directories(zpg PRIVATE
+        "${source_dir}/interface"
+        "${source_dir}"
+)
+
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     target_compile_definitions(zpg PRIVATE ASSERTATION_ENABLED=1)
 else()

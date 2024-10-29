@@ -10,12 +10,13 @@ public:
 
 	void Attach(EventType t_eventType, IWindowObserver* t_observer) override;
 	void Detach(EventType t_eventType, IWindowObserver* t_observer) override;
-	void Notify(EventType t_event, std::shared_ptr<const void> t_event_data) const override;
 
 	void SetKeyCallbacks() const;
 	void PollEvents() const;
 	void SwapBuffers() const;
 	bool RenderLoop() const;
+
+	void PrintInfo() const;
 
 private:
 	static void ErrorCallback(int t_error, const char* t_description);
@@ -28,6 +29,7 @@ private:
 	static void ButtonCallback(GLFWwindow* t_window, int t_button, int t_action, int t_mode);
 	static void GetTime();
 
+	void Notify(EventType t_event, std::shared_ptr<const void> t_event_data) const override;
 	void InitGlew() const;
 	void CreateWindow(int t_width, int t_height, const std::string& t_title);
 

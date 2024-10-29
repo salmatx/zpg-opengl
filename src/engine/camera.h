@@ -24,7 +24,6 @@ public:
 
   void Attach(ICameraObserver* observer) override;
   void Detach(ICameraObserver* observer) override;
-  void Notify() override;
 
   void Update(EventType t_event, std::shared_ptr<const void> t_event_data) override;
 
@@ -32,6 +31,8 @@ public:
   void RemoveObservation(EventType t_event);
 
 private:
+  void Notify() override;
+
   Window* m_window;
   std::list<ICameraObserver*> m_observers;
   glm::mat4 m_projection;
