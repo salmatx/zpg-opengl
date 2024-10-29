@@ -155,6 +155,8 @@ void Window::CreateWindow(int t_width, int t_height, const std::string& t_title)
 	glfwSwapInterval(1);
 
 	glfwSetWindowUserPointer(m_window, this);
+
+	glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
 void Window::GetTime() {

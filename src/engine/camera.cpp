@@ -83,7 +83,7 @@ void Camera::Update(EventType t_event, std::shared_ptr<const void> t_event_data)
 		m_last_x = x_pos;
 		m_last_y = y_pos;
 
-		float sensitivity = 0.3f;
+		float sensitivity = 0.1f;
 		x_offset *= sensitivity;
 		y_offset *= sensitivity;
 
