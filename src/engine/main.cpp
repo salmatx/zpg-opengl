@@ -1,21 +1,13 @@
 #include <random>
 
+#include "application.h"
 #include "epch.h"
-#include "gl_common.h"
-#include "index_buffer.h"
 #include "drawable_object.h"
-#include "vertex_buffer.h"
-#include "model.h"
-#include "model_rotate.h"
-#include "model_scale.h"
-#include "model_translate.h"
 #include "scene.h"
 #include "shader.h"
-#include "window.h"
 
 #include "tree.h"
 #include "bushes.h"
-#include "sphere.h"
 #include "gift.h"
 
 using RandGenType = std::mt19937_64;
@@ -48,7 +40,6 @@ static void GenerateRandomObjects(engine::Scene& t_scene, const std::string& t_n
 	}
 }
 
-
 void PrintOpenGLInfo() {
 	printf("OpenGL Version: %s\n", glGetString(GL_VERSION));
 	printf("Using GLEW %s\n", glewGetString(GLEW_VERSION));
@@ -61,12 +52,8 @@ void PrintOpenGLInfo() {
 }
 
 int main() {
-	int width = 800;
-	int height = 600;
+	engine::Application app(800, 600, "ZPG");
 
-	engine::Window window(width, height, "ZPG");
-	PrintOpenGLInfo();
-	window.SetKeyCallbacks();
 
 	engine::CameraDepth depth{0.1f, 100.0f};
 	engine::CameraPosition position{
@@ -74,31 +61,24 @@ int main() {
 		{0.0f, 0.0f, -1.0f},
 		{0.0f, 1.0f, 0.0f}
 	};
+	app.CreateCamera(position, depth);
 
-	engine::Camera camera{window, width, height, depth, position};
+	auto scene = app.CreateScene();
+	auto scene1 = app.CreateScene();
 
-	engine::Scene scene(camera);
-	engine::Scene scene1(camera);
-
-	scene.AddShader("basic", "../res/shaders/basic.glsl");
-	scene1.AddShader("basic", "../res/shaders/basic.glsl");
-
-	camera.InitCamera();
+	app.LinkShader("basic", "../res/shaders/basic.glsl");
+	app.SetShader(scene, "basic");
+	app.SetShader(scene1, "basic");
 
 	scene.AddObject("tree", {tree, sizeof(tree), float{}, 3, float{}, 3});
 	scene.AddObject("bushes", {bushes, sizeof(bushes), float{}, 3, float{}, 3});
-
 	scene1.AddObject("gift", {gift, sizeof(gift), float{}, 3, float{}, 3});
-
-	scene.SelectShader("basic");
-	scene1.SelectShader("basic");
 
 	GenerateRandomObjects(scene, "tree", 150);
 	GenerateRandomObjects(scene, "bushes", 80);
 
 	float alpha = 0.0f;
-
-	while (window.RenderLoop()) {
+	while (app.Run()) {
 		scene1.ClearScene();
 
 		alpha += 1.0f;
@@ -114,12 +94,6 @@ int main() {
 
 		scene.DrawScene();
 		scene1.DrawScene();
-
-		// update other events like input handling
-		window.PollEvents();
-		// put the stuff we’ve been drawing onto the display
-		window.SwapBuffers();
 	}
-
 	return 0;
 }

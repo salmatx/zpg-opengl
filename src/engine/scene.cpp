@@ -6,12 +6,9 @@
 #include "model_translate.h"
 
 namespace engine {
-Scene::Scene(Camera& t_camera)
-	: m_camera(&t_camera) {}
-
 void Scene::DrawScene() {
 	for (const auto& [key, value] : m_objects) {
-		value->Draw(m_current_shader);
+		value->Draw(m_shader);
 	}
 }
 
@@ -54,20 +51,7 @@ void Scene::AddTransformation(const std::string& t_name, const Transformation& t
 	}
 }
 
-void Scene::AddShader(const std::string& t_name, std::string t_path) {
-	m_shaders.emplace(t_name, std::make_shared<Shader>(*m_camera, t_path));
-}
-
-bool Scene::RemoveShader(const std::string& t_name) {
-	const auto count = std::erase_if(m_shaders, [&](const auto& item) {
-		const auto& [key, value] = item;
-		return key == t_name;
-	});
-
-	return count > 0;
-}
-
-void Scene::SelectShader(const std::string& t_name) {
-	m_current_shader = m_shaders.at(t_name);
+void Scene::SetShader(std::shared_ptr<Shader> t_shader) {
+	m_shader = std::move(t_shader);
 }
 }
