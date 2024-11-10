@@ -29,7 +29,7 @@ private:
 	static void ButtonCallback(GLFWwindow* t_window, int t_button, int t_action, int t_mode);
 	static void GetTime();
 
-	void Notify(EventType t_event, std::shared_ptr<const void> t_event_data) const override;
+	void Notify(EventType t_event) const override;
 	void InitGlew() const;
 	void CreateWindow(int t_width, int t_height, const std::string& t_title);
 
@@ -38,6 +38,7 @@ private:
 
 	static float m_time_per_frame;
 	static float m_last_frame;
+	static std::shared_ptr<const void> m_event;
 };
 
 }

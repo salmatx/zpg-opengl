@@ -6,6 +6,7 @@
 namespace engine {
 float Window::m_last_frame = 0.0f;
 float Window::m_time_per_frame = 0.0f;
+std::shared_ptr<const void> Window::m_event;
 
 void Window::ErrorCallback(int t_error, const char* t_description) {
 	fputs(t_description, stderr);
@@ -18,15 +19,15 @@ void Window::KeyCallback(GLFWwindow* t_window, int t_key, int t_scancode, int t_
 
 	Window* window = static_cast<Window*>(glfwGetWindowUserPointer(t_window));
 
-	auto event = std::make_shared<KeyEvent>(t_key, m_time_per_frame);
-	window->Notify(EventType::key, event);
+	m_event = std::make_shared<KeyEvent>(t_key, m_time_per_frame);
+	window->Notify(EventType::key);
 }
 
 void Window::ScrollCallback(GLFWwindow* t_window, double t_xoffset, double t_yoffset) {
 	Window* window = static_cast<Window*>(glfwGetWindowUserPointer(t_window));
 
-	auto event = std::make_shared<ScrollEvent>(t_xoffset, t_yoffset);
-	window->Notify(EventType::scroll, event);
+	m_event = std::make_shared<ScrollEvent>(t_xoffset, t_yoffset);
+	window->Notify(EventType::scroll);
 }
 
 void Window::WindowFocusCallback(GLFWwindow* t_window, int t_focused) {
@@ -43,8 +44,8 @@ void Window::WindowSizeCallback(GLFWwindow* t_window, int t_width, int t_height)
 
 	Window* window = static_cast<Window*>(glfwGetWindowUserPointer(t_window));
 
-	auto event = std::make_shared<ScreenSizeEvent>(t_width, t_height);
-	window->Notify(EventType::screen_size, event);
+	m_event = std::make_shared<ScreenSizeEvent>(t_width, t_height);
+	window->Notify(EventType::screen_size);
 }
 
 void Window::CursorCallback(GLFWwindow* t_window, double t_x, double t_y) {
@@ -52,8 +53,8 @@ void Window::CursorCallback(GLFWwindow* t_window, double t_x, double t_y) {
 
 	Window* window = static_cast<Window*>(glfwGetWindowUserPointer(t_window));
 
-	auto event = std::make_shared<MouseEvent>(t_x, t_y);
-	window->Notify(EventType::mouse, event);
+	m_event = std::make_shared<MouseEvent>(t_x, t_y);
+	window->Notify(EventType::mouse);
 }
 
 void Window::ButtonCallback(GLFWwindow* t_window, int t_button, int t_action, int t_mode) {
@@ -90,10 +91,10 @@ void Window::Detach(EventType t_eventType, IWindowObserver* t_observer) {
 	}
 }
 
-void Window::Notify(EventType t_event, std::shared_ptr<const void> t_event_data) const {
+void Window::Notify(EventType t_event) const {
 	for (const auto& [key, value] : m_observers) {
 		if (key == t_event) {
-			value->Update(t_event, t_event_data);
+			value->Update(t_event, std::move(m_event));
 		}
 	}
 }

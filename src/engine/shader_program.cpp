@@ -3,14 +3,17 @@
 #include "gl_common.h"
 
 namespace engine {
-ShaderProgram::ShaderProgram(Camera& t_camera)
+ShaderProgram::ShaderProgram(Camera& t_camera, Light& t_light)
 	: m_camera(&t_camera),
+	m_light(&t_light),
 	m_loader(ShaderLoader()){
 	m_camera->Attach(this);
+	m_light->Attach(this);
 }
 
 ShaderProgram::~ShaderProgram() {
 	m_camera->Detach(this);
+	m_light->Detach(this);
 	GLCall(glDeleteProgram(m_rendered_ID));
 }
 
@@ -27,6 +30,10 @@ void ShaderProgram::SetUniform4f(const std::string& t_name, float t_v0, float t_
 	GLCall(glUniform4f(location, t_v0, t_v1, t_v2, t_v3));
 }
 
+void ShaderProgram::SetUniform3f(const std::string& t_name, const glm::vec3& t_vector) {
+	GLCall(glUniform3f(GetUniformLocation(t_name), t_vector.x, t_vector.y, t_vector.z));
+}
+
 void ShaderProgram::SetUniformMat4f(const std::string& t_name, const glm::mat4& t_matrix) {
 	GLCall(glUniformMatrix4fv(this->GetUniformLocation(t_name), 1, GL_FALSE, glm::value_ptr(t_matrix)));
 }
@@ -35,14 +42,22 @@ void ShaderProgram::LoadShader(const std::string& t_filepath) {
 	m_shaders.emplace_back(m_loader.LoadShader(t_filepath));
 }
 
-void ShaderProgram::Update(const glm::mat4& t_projection, const glm::mat4& t_view) {
+void ShaderProgram::Update(const glm::mat4& t_projection, const glm::mat4& t_view, const glm::vec3& t_position) {
 	Bind();
 	SetUniformMat4f("u_project_matrix", t_projection);
 	SetUniformMat4f("u_view_matrix", t_view);
+	SetUniform3f("u_view_position", t_position);
+}
+
+void ShaderProgram::Update(const glm::vec3& t_position, const glm::vec3& t_color) {
+	Bind();
+	SetUniform3f("u_light_position", t_position);
+	SetUniform3f("u_light_color", t_color);
 }
 
 void ShaderProgram::RemoveObservation() {
 	m_camera->Detach(this);
+	m_light->Detach(this);
 }
 
 int ShaderProgram::GetUniformLocation(const std::string& t_name) {

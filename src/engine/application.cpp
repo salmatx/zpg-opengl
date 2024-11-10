@@ -17,6 +17,11 @@ void Application::UseShaderProgram(Scene& t_scene, const std::string& t_name) {
 		return;
 	}
 
+	if (m_light == nullptr) {
+		std::cerr << "Bind light first" << std::endl;
+		return;
+	}
+
 	auto it = m_shader_programs.find(t_name);
 	if (it != m_shader_programs.end()) {
 		t_scene.SetShaderProgram(it->second);
@@ -25,7 +30,7 @@ void Application::UseShaderProgram(Scene& t_scene, const std::string& t_name) {
 
 	auto path_iter = m_shader_paths.find(t_name);
 	if (path_iter != m_shader_paths.end()) {
-		auto shader = std::make_shared<ShaderProgram>(*m_camera);
+		auto shader = std::make_shared<ShaderProgram>(*m_camera, *m_light);
 		for (const auto& path : path_iter->second) {
 			shader->LoadShader(path);
 		}
@@ -33,6 +38,7 @@ void Application::UseShaderProgram(Scene& t_scene, const std::string& t_name) {
 		m_shader_programs[t_name] = shader;
 		t_scene.SetShaderProgram(shader);
 		m_camera->InitCamera();
+		m_light->InitLight();
 	}
 }
 
@@ -41,7 +47,15 @@ void Application::CreateCamera(const CameraPosition& t_position, const CameraDep
 }
 
 Scene Application::CreateScene() {
-	return Scene{};
+	return {};
+}
+
+Light Application::CreateLight(const LightParams& t_params) {
+	return {t_params};
+}
+
+void Application::UseLight(const Light& t_light) {
+	m_light = std::make_shared<Light>(t_light);
 }
 
 bool Application::Run() {

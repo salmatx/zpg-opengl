@@ -22,8 +22,8 @@ public:
   Camera(Window& t_window, int t_screen_width, int t_screen_height, CameraDepth t_depth, CameraPosition t_position);
   ~Camera() override;
 
-  void Attach(ICameraObserver* observer) override;
-  void Detach(ICameraObserver* observer) override;
+  void Attach(ICameraObserver* t_observer) override;
+  void Detach(ICameraObserver* t_observer) override;
 
   void Update(EventType t_event, std::shared_ptr<const void> t_event_data) override;
 

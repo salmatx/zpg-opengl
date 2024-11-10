@@ -6,3 +6,4 @@
 #include "epch.h"
 #include "shader_program.h"
 #include "scene.h"
+#include "light.h"

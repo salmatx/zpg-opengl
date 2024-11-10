@@ -39,6 +39,6 @@ public:
 
 	virtual void Attach(EventType t_eventType, IWindowObserver* t_observer) = 0;
 	virtual void Detach(EventType t_eventType, IWindowObserver* t_observer) = 0;
-	virtual void Notify(EventType t_event, std::shared_ptr<const void> t_event_data) const = 0;
+	virtual void Notify(EventType t_event) const = 0;
 };
 }

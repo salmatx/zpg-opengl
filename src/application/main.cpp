@@ -5,6 +5,8 @@
 #include "tree.h"
 #include "bushes.h"
 #include "gift.h"
+#include "sphere.h"
+#include "triangle.h"
 
 using RandGenType = std::mt19937_64;
 
@@ -36,9 +38,74 @@ static void GenerateRandomObjects(engine::Scene& t_scene, const std::string& t_n
 	}
 }
 
+void InitTriangle(engine::Application& t_app, engine::Scene& t_scene) {
+	auto triangle_pos = engine::Transformation({
+			{1.0f, 0.0f, 0.0f},
+			{0.0f, 1.0f, 0.0f},
+			{3.0f, 3.0f, 3.0f},
+			270,
+			engine::TransformationOrder::TRS
+		});
+
+	t_app.UseShaderProgram(t_scene, "phong");
+	t_scene.AddObject("triangle", {triangle, sizeof(triangle), float{}, 3, float{}, 3});
+	t_scene.AddTransformation("triangle", triangle_pos);
+}
+
+void InitSpehers(engine::Application& t_app, engine::Scene& t_scene) {
+	auto sphere1 = engine::Transformation({
+			{3.0f, 0.0f, 0.0f},
+			{0.0f, 1.0f, 0.0f},
+			{1.0f, 1.0f, 1.0f},
+			0,
+			engine::TransformationOrder::TRS
+		});
+	auto sphere2 = engine::Transformation({
+			{-3.0f, 0.0f, 0.0f},
+			{0.0f, 1.0f, 0.0f},
+			{1.0f, 1.0f, 1.0f},
+			0,
+			engine::TransformationOrder::TRS
+		});
+	auto sphere3 = engine::Transformation({
+			{0.0f, 0.0f, 3.0f},
+			{0.0f, 1.0f, 0.0f},
+			{1.0f, 1.0f, 1.0f},
+			0,
+			engine::TransformationOrder::TRS
+		});
+	auto sphere4 = engine::Transformation({
+			{0.0f, 0.0f, -3.0f},
+			{0.0f, 1.0f, 0.0f},
+			{1.0f, 1.0f, 1.0f},
+			0,
+			engine::TransformationOrder::TRS
+		});
+
+
+	t_app.UseShaderProgram(t_scene, "phong");
+	t_scene.AddObject("sphere", {sphere, sizeof(sphere), float{}, 3, float{}, 3});
+	t_scene.AddTransformation("sphere", sphere1);
+	t_scene.AddTransformation("sphere", sphere2);
+	t_scene.AddTransformation("sphere", sphere3);
+	t_scene.AddTransformation("sphere", sphere4);
+}
+
+void InitForest(engine::Application& t_app, engine::Scene& t_scene) {
+	t_app.UseShaderProgram(t_scene, "phong");
+	t_scene.AddObject("tree", {tree, sizeof(tree), float{}, 3, float{}, 3});
+	t_scene.AddObject("bushes", {bushes, sizeof(bushes), float{}, 3, float{}, 3});
+	GenerateRandomObjects(t_scene, "tree", 150);
+	GenerateRandomObjects(t_scene, "bushes", 80);
+}
+
+void InitGift(engine::Application& t_app, engine::Scene& t_scene) {
+	t_app.UseShaderProgram(t_scene, "phong");
+	t_scene.AddObject("gift", {gift, sizeof(gift), float{}, 3, float{}, 3});
+}
+
 int main() {
 	engine::Application app(800, 600, "ZPG");
-
 
 	engine::CameraDepth depth{0.1f, 100.0f};
 	engine::CameraPosition position{
@@ -48,23 +115,28 @@ int main() {
 	};
 	app.CreateCamera(position, depth);
 
-	auto scene = app.CreateScene();
-	auto scene1 = app.CreateScene();
+	engine::LightParams light_params{
+		{0.0f, 0.0f, 0.0f},
+		{1.0f, 1.0f, 1.0f}
+	};
+	auto light = app.CreateLight(light_params);
+	app.UseLight(light);
 
-	app.CreateShaderProgram("basic", "../res/shaders/basic_vertex.glsl", "../res/shaders/basic_fragment.glsl");
-	app.UseShaderProgram(scene, "basic");
-	app.UseShaderProgram(scene1, "basic");
+	app.CreateShaderProgram("phong", "../res/shaders/phong_vertex.glsl", "../res/shaders/phong_fragment.glsl");
 
-	scene.AddObject("tree", {tree, sizeof(tree), float{}, 3, float{}, 3});
-	scene.AddObject("bushes", {bushes, sizeof(bushes), float{}, 3, float{}, 3});
-	scene1.AddObject("gift", {gift, sizeof(gift), float{}, 3, float{}, 3});
+	auto triangle = app.CreateScene();
+	auto spheres = app.CreateScene();
+	auto forest = app.CreateScene();
+	auto gift = app.CreateScene();
 
-	GenerateRandomObjects(scene, "tree", 150);
-	GenerateRandomObjects(scene, "bushes", 80);
+	InitTriangle(app, triangle);
+	InitSpehers(app, spheres);
+	InitForest(app, forest);
+	InitGift(app, gift);
 
 	float alpha = 0.0f;
 	while (app.Run()) {
-		scene1.ClearScene();
+		gift.ClearScene();
 
 		alpha += 1.0f;
 		auto transformation = engine::Transformation({
@@ -75,10 +147,14 @@ int main() {
 			engine::TransformationOrder::TRS
 		});
 
-		scene1.AddTransformation("gift", transformation);
+		gift.AddTransformation("gift", transformation);
 
-		scene.DrawScene();
-		scene1.DrawScene();
+		forest.DrawScene();
+		gift.DrawScene();
+
+		// spheres.DrawScene();
+		//
+		// triangle.DrawScene();
 	}
 	return 0;
 }

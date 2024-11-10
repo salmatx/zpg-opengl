@@ -33,12 +33,12 @@ Camera::~Camera() {
 	m_window->Detach(EventType::screen_size, this);
 }
 
-void Camera::Attach(ICameraObserver* observer) {
-	m_observers.emplace_back(observer);
+void Camera::Attach(ICameraObserver* t_observer) {
+	m_observers.emplace_back(t_observer);
 }
 
-void Camera::Detach(ICameraObserver* observer) {
-	m_observers.remove(observer);
+void Camera::Detach(ICameraObserver* t_observer) {
+	m_observers.remove(t_observer);
 }
 
 void Camera::Notify() {
@@ -47,7 +47,7 @@ void Camera::Notify() {
 	m_view = glm::lookAt(m_camera_position, m_camera_position + m_camera_front, m_camera_up);
 
 	for (const auto& observer : m_observers) {
-		observer->Update(m_projection, m_view);
+		observer->Update(m_projection, m_view, m_camera_position);
 	}
 }
 
