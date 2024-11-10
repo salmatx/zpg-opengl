@@ -11,27 +11,27 @@ Application::Application(int t_scr_width, int t_scr_height, std::string t_title)
 	m_window->SetKeyCallbacks();
 }
 
-void Application::LinkShader(const std::string& t_name, const std::string& t_path) {
-	m_shader_paths[t_name] = t_path;
-}
-
-void Application::SetShader(Scene& t_scene, const std::string& t_name) {
+void Application::UseShaderProgram(Scene& t_scene, const std::string& t_name) {
 	if (m_camera == nullptr) {
 		std::cerr << "Create camera first" << std::endl;
 		return;
 	}
 
-	auto it = m_shaders.find(t_name);
-	if (it != m_shaders.end()) {
-		t_scene.SetShader(it->second);
+	auto it = m_shader_programs.find(t_name);
+	if (it != m_shader_programs.end()) {
+		t_scene.SetShaderProgram(it->second);
 		return;
 	}
 
 	auto path_iter = m_shader_paths.find(t_name);
 	if (path_iter != m_shader_paths.end()) {
-		auto shader = std::make_shared<Shader>(*m_camera, path_iter->second);
-		m_shaders[t_name] = shader;
-		t_scene.SetShader(shader);
+		auto shader = std::make_shared<ShaderProgram>(*m_camera);
+		for (const auto& path : path_iter->second) {
+			shader->LoadShader(path);
+		}
+		shader->CreateShaderProgram();
+		m_shader_programs[t_name] = shader;
+		t_scene.SetShaderProgram(shader);
 		m_camera->InitCamera();
 	}
 }

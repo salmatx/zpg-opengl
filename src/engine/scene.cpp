@@ -51,7 +51,7 @@ void Scene::AddTransformation(const std::string& t_name, const Transformation& t
 	}
 }
 
-void Scene::SetShader(std::shared_ptr<Shader> t_shader) {
+void Scene::SetShaderProgram(std::shared_ptr<ShaderProgram> t_shader) {
 	m_shader = std::move(t_shader);
 }
 }

@@ -37,7 +37,7 @@ void DrawableObject::AddTransformation(std::unique_ptr<ModelTransformation>(&& t
 /// Draw array using indices
 /// @param t_ibo
 /// @param t_shader
-void DrawableObject::Draw(const IndexBuffer& t_ibo, std::shared_ptr<Shader> t_shader) const {
+void DrawableObject::Draw(const IndexBuffer& t_ibo, std::shared_ptr<ShaderProgram> t_shader) const {
 	t_shader->Bind();
 	m_model->Bind();
 	t_ibo.Bind();
@@ -58,7 +58,7 @@ void DrawableObject::Draw(const IndexBuffer& t_ibo, std::shared_ptr<Shader> t_sh
 
 /// Draw whole array without using indices
 /// @param t_shader
-void DrawableObject::Draw(std::shared_ptr<Shader> t_shader) const {
+void DrawableObject::Draw(std::shared_ptr<ShaderProgram> t_shader) const {
 	t_shader->Bind();
 	m_model->Bind();
 

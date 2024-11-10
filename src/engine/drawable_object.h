@@ -1,7 +1,7 @@
 #pragma once
 
 #include "index_buffer.h"
-#include "shader.h"
+#include "shader_program.h"
 #include "model.h"
 #include "model_transformation.h"
 
@@ -23,8 +23,8 @@ public:
 
 	void AddTransformation(std::unique_ptr<ModelTransformation> (& t_transformation)[3]);
 	void AddTransformation(std::unique_ptr<ModelTransformation> (&& t_transformation)[3]);
-	void Draw(const IndexBuffer& t_ibo, std::shared_ptr<Shader> t_shader) const;
-	void Draw(std::shared_ptr<Shader> t_shader) const;
+	void Draw(const IndexBuffer& t_ibo, std::shared_ptr<ShaderProgram> t_shader) const;
+	void Draw(std::shared_ptr<ShaderProgram> t_shader) const;
 	void Clear();
 
 private:

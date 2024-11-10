@@ -51,9 +51,9 @@ int main() {
 	auto scene = app.CreateScene();
 	auto scene1 = app.CreateScene();
 
-	app.LinkShader("basic", "../res/shaders/basic.glsl");
-	app.SetShader(scene, "basic");
-	app.SetShader(scene1, "basic");
+	app.CreateShaderProgram("basic", "../res/shaders/basic_vertex.glsl", "../res/shaders/basic_fragment.glsl");
+	app.UseShaderProgram(scene, "basic");
+	app.UseShaderProgram(scene1, "basic");
 
 	scene.AddObject("tree", {tree, sizeof(tree), float{}, 3, float{}, 3});
 	scene.AddObject("bushes", {bushes, sizeof(bushes), float{}, 3, float{}, 3});

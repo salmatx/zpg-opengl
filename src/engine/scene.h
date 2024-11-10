@@ -26,11 +26,11 @@ public:
 	void AddObject(const std::string& t_name, const DrawableObject& t_drawable_object);
 	bool RemoveObject(const std::string& t_name);
 	void AddTransformation(const std::string& t_name, const Transformation& t_transformation);
-	void SetShader(std::shared_ptr<Shader> t_shader);
+	void SetShaderProgram(std::shared_ptr<ShaderProgram> t_shader);
 
 private:
 	std::unordered_map<std::string, std::unique_ptr<DrawableObject>> m_objects;
-	std::shared_ptr<Shader> m_shader;
+	std::shared_ptr<ShaderProgram> m_shader;
 };
 
 }
