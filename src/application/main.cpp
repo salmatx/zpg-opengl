@@ -116,7 +116,7 @@ int main() {
 	app.CreateCamera(position, depth);
 
 	engine::LightParams light_params{
-		{0.0f, 0.0f, 0.0f},
+		{300.0f, 1000.0f, 0.0f},
 		{1.0f, 1.0f, 1.0f}
 	};
 	auto light = app.CreateLight(light_params);
