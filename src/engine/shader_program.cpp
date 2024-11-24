@@ -3,17 +3,23 @@
 #include "gl_common.h"
 
 namespace engine {
-ShaderProgram::ShaderProgram(Camera& t_camera, Light& t_light)
+ShaderProgram::ShaderProgram(Camera& t_camera, std::vector<std::shared_ptr<Light>> t_light)
 	: m_camera(&t_camera),
-	m_light(&t_light),
 	m_loader(ShaderLoader()){
 	m_camera->Attach(this);
-	m_light->Attach(this);
+
+	m_lights.reserve(t_light.size());
+	for(auto& light : t_light) {
+		m_lights.emplace_back(std::move(light));
+		m_lights.back().get()->Attach(this);
+	}
 }
 
 ShaderProgram::~ShaderProgram() {
 	m_camera->Detach(this);
-	m_light->Detach(this);
+	for(auto& light : m_lights) {
+		light->Detach(this);
+	}
 	GLCall(glDeleteProgram(m_rendered_ID));
 }
 
@@ -34,6 +40,16 @@ void ShaderProgram::SetUniform3f(const std::string& t_name, const glm::vec3& t_v
 	GLCall(glUniform3f(GetUniformLocation(t_name), t_vector.x, t_vector.y, t_vector.z));
 }
 
+void ShaderProgram::SetUniform1f(const std::string& t_name, float t_v0) {
+	GLCall(const int location = this->GetUniformLocation(t_name));
+	GLCall(glUniform1f(location, t_v0));
+}
+
+void ShaderProgram::SetUniform1i(const std::string& t_name, int t_v0) {
+	GLCall(const int location = this->GetUniformLocation(t_name));
+	GLCall(glUniform1i(location, t_v0));
+}
+
 void ShaderProgram::SetUniformMat4f(const std::string& t_name, const glm::mat4& t_matrix) {
 	GLCall(glUniformMatrix4fv(this->GetUniformLocation(t_name), 1, GL_FALSE, glm::value_ptr(t_matrix)));
 }
@@ -51,13 +67,42 @@ void ShaderProgram::Update(const glm::mat4& t_projection, const glm::mat4& t_vie
 
 void ShaderProgram::Update(const glm::vec3& t_position, const glm::vec3& t_color) {
 	Bind();
-	SetUniform3f("u_light_position", t_position);
-	SetUniform3f("u_light_color", t_color);
+
+	int size = m_lights.size();
+	SetUniform1i("u_light_count", size);
+	for (int i = 0; i < size; ++i) {
+		std::string base = "u_lights[" + std::to_string(i) + "]";
+		SetUniform3f(base + ".position", m_lights[i]->GetPosition());
+		SetUniform3f(base + ".color", m_lights[i]->GetColor());
+		SetUniform1f(base + ".intensity", m_lights[i]->GetIntensity());
+		SetUniform3f(base + ".direction", m_lights[i]->GetDirection());
+		SetUniform1f(base + ".cutoff", glm::cos(glm::radians(m_lights[i]->GetCutoff())));
+		SetUniform1f(base + ".outer_cutoff", glm::cos(glm::radians(m_lights[i]->GetOuterCutoff())));
+		SetUniform1i(base + ".type", static_cast<int>(m_lights[i]->GetType()));
+	}
 }
+
+// void ShaderProgram::Update(const std::vector<std::shared_ptr<Light>>& t_lights) {
+// 	Bind();
+//
+// 	int size = t_lights.size();
+// 	for (int i = 0; i < size; ++i) {
+// 		std::string base = "u_lights[" + std::to_string(i) + "]";
+// 		SetUniform3f(base + ".position", t_lights[i]->GetPosition());
+// 		SetUniform3f(base + ".color", t_lights[i]->GetColor());
+// 		SetUniform1f(base + ".intensity", t_lights[i]->GetIntensity());
+// 		SetUniform3f(base + ".direction", t_lights[i]->GetDirection());
+// 		SetUniform1f(base + ".cutoff", glm::cos(glm::radians(t_lights[i]->GetCutoff())));
+// 		SetUniform1f(base + ".outerCutoff", glm::cos(glm::radians(t_lights[i]->GetOuterCutoff())));
+// 		SetUniform1i(base + ".type", static_cast<int>(t_lights[i]->GetType()));
+// 	}
+// }
 
 void ShaderProgram::RemoveObservation() {
 	m_camera->Detach(this);
-	m_light->Detach(this);
+	for(auto& light : m_lights) {
+		light->Detach(this);
+	}
 }
 
 int ShaderProgram::GetUniformLocation(const std::string& t_name) {
