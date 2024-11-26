@@ -16,48 +16,6 @@ std::uniform_real_distribution uniform_position(-50.0f, 50.0f);
 std::uniform_real_distribution uniform_rotation(0.0f, 100.0f);
 std::uniform_real_distribution uniform_scale(0.6f, 1.2f);
 
-std::vector<std::shared_ptr<engine::Light>> InitLights() {
-	std::vector<std::shared_ptr<engine::Light>> lights;
-
-	// Initialize point light
-	auto pointLightParams = engine::LightParams{
-		engine::LightType::Point,
-		glm::vec3(5.0f, 10.0f, 5.0f),   // Position
-		glm::vec3(1.0f, 1.0f, 1.0f),    // Color
-		glm::vec3(0.0f, 0.0f, 0.0f),    // Direction (not used for Point light)
-		1.0f,							// Intensity
-		0.0f,                           // Cutoff (not used for Point light)
-		0.0f                            // Outer Cutoff (not used for Point light)
-	};
-	lights.emplace_back(std::make_shared<engine::Light>(pointLightParams));
-
-	// Initialize directional light
-	engine::LightParams directionalLightParams{
-		engine::LightType::Directional,
-		glm::vec3(0.0f, 0.0f, 0.0f),    // Position (irrelevant for directional light)
-		glm::vec3(0.5f, 0.5f, 0.5f),    // Color
-		glm::vec3(-1.0f, -1.0f, -1.0f), // Direction of light
-		1.5f,                           // Increase intensity for better visibility
-		0.0f,                           // Cutoff (not used for Directional light)
-		0.0f                            // Outer Cutoff (not used for Directional light)
-	};
-	lights.emplace_back(std::make_shared<engine::Light>(directionalLightParams));
-
-	// Initialize spotlight
-	auto spotLightParams = engine::LightParams{
-		engine::LightType::Spot,
-		glm::vec3(0.0f, 10.0f, 0.0f),   // Position
-		glm::vec3(1.0f, 1.0f, 0.0f),    // Color
-		glm::vec3(0.0f, -1.0f, 0.0f),   // Direction, pointing downwards
-		1.5f,                           // Increase intensity for better visibility
-		20.0f,                          // Increase cutoff angle for a broader cone of light
-		30.0f                           // Outer Cutoff in degrees
-	};
-	lights.emplace_back(std::make_shared<engine::Light>(spotLightParams));
-
-	return lights;
-}
-
 static void GenerateRandomObjects(engine::Scene& t_scene, const std::string& t_name, const int t_count) {
 	for (int i = 0; i < t_count; ++i) {
 		float x_pos = uniform_position(rand_gen);
@@ -89,8 +47,7 @@ void InitTriangle(engine::Application& t_app, engine::Scene& t_scene) {
 			engine::TransformationOrder::TRS
 		});
 
-	auto lights = InitLights();
-	t_app.UseShaderProgram(t_scene, "phong", lights);
+	t_app.UseShaderProgram(t_scene, "phong");
 	t_scene.AddObject("triangle", {triangle, sizeof(triangle), float{}, 3, float{}, 3});
 	t_scene.AddTransformation("triangle", triangle_pos);
 }
@@ -126,8 +83,7 @@ void InitSpehers(engine::Application& t_app, engine::Scene& t_scene) {
 		});
 
 
-	auto lights = InitLights();
-	t_app.UseShaderProgram(t_scene, "phong", lights);
+	t_app.UseShaderProgram(t_scene, "phong");
 	t_scene.AddObject("sphere", {sphere, sizeof(sphere), float{}, 3, float{}, 3});
 	t_scene.AddTransformation("sphere", sphere1);
 	t_scene.AddTransformation("sphere", sphere2);
@@ -136,8 +92,7 @@ void InitSpehers(engine::Application& t_app, engine::Scene& t_scene) {
 }
 
 void InitForest(engine::Application& t_app, engine::Scene& t_scene) {
-	auto lights = InitLights();
-	t_app.UseShaderProgram(t_scene, "phong", lights);
+	t_app.UseShaderProgram(t_scene, "phong");
 	t_scene.AddObject("tree", {tree, sizeof(tree), float{}, 3, float{}, 3});
 	t_scene.AddObject("bushes", {bushes, sizeof(bushes), float{}, 3, float{}, 3});
 	GenerateRandomObjects(t_scene, "tree", 150);
@@ -145,8 +100,7 @@ void InitForest(engine::Application& t_app, engine::Scene& t_scene) {
 }
 
 void InitGift(engine::Application& t_app, engine::Scene& t_scene) {
-	auto lights = InitLights();
-	t_app.UseShaderProgram(t_scene, "phong", lights);
+	t_app.UseShaderProgram(t_scene, "phong");
 	t_scene.AddObject("gift", {gift, sizeof(gift), float{}, 3, float{}, 3});
 }
 
@@ -161,21 +115,28 @@ int main() {
 	};
 	app.CreateCamera(position, depth);
 
+	engine::LightParams light_params{
+		{300.0f, 1000.0f, 0.0f},
+		{1.0f, 1.0f, 1.0f}
+	};
+	auto light = app.CreateLight(light_params);
+	app.UseLight(light);
+
 	app.CreateShaderProgram("phong", "../res/shaders/phong_vertex.glsl", "../res/shaders/phong_fragment.glsl");
 
-	// auto triangle = app.CreateScene();
-	// auto spheres = app.CreateScene();
+	auto triangle = app.CreateScene();
+	auto spheres = app.CreateScene();
 	auto forest = app.CreateScene();
-	// auto gift = app.CreateScene();
+	auto gift = app.CreateScene();
 
-	// InitTriangle(app, triangle);
-	// InitSpehers(app, spheres);
+	InitTriangle(app, triangle);
+	InitSpehers(app, spheres);
 	InitForest(app, forest);
-	// InitGift(app, gift);
+	InitGift(app, gift);
 
 	float alpha = 0.0f;
 	while (app.Run()) {
-		// gift.ClearScene();
+		gift.ClearScene();
 
 		alpha += 1.0f;
 		auto transformation = engine::Transformation({
@@ -186,10 +147,10 @@ int main() {
 			engine::TransformationOrder::TRS
 		});
 
-		// gift.AddTransformation("gift", transformation);
+		gift.AddTransformation("gift", transformation);
 
 		forest.DrawScene();
-		// gift.DrawScene();
+		gift.DrawScene();
 
 		// spheres.DrawScene();
 		//

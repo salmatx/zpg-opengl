@@ -10,7 +10,7 @@
 namespace engine {
 class ShaderProgram : public IShader, public ICameraObserver, public ILightObserver {
 public:
-	ShaderProgram(Camera& t_camera, std::vector<std::shared_ptr<Light>> t_light);
+	ShaderProgram(Camera& t_camera, Light& t_light);
 	ShaderProgram(const ShaderProgram& t_other) = delete;
 	ShaderProgram& operator=(const ShaderProgram& t_other) = delete;
 	~ShaderProgram();
@@ -23,7 +23,6 @@ public:
 
 	void Update(const glm::mat4& t_projection, const glm::mat4& t_view, const glm::vec3& t_position) override;
 	void Update(const glm::vec3& t_position, const glm::vec3& t_color) override;
-	// void Update(const std::vector<std::shared_ptr<Light>>& t_lights) override;
 
 	void RemoveObservation();
 
@@ -32,11 +31,9 @@ private:
 	std::optional<unsigned int> CompileShaderProgram(unsigned int t_type, const std::string& t_source);
 	void SetUniform4f(const std::string& t_name, float t_v0, float t_v1, float t_v2, float t_v3) override;
 	void SetUniform3f(const std::string& t_name, const glm::vec3& t_vector);
-	void SetUniform1f(const std::string& t_name, float t_v0);
-	void SetUniform1i(const std::string& t_name, int t_v0);
 
 	Camera* m_camera;
-	std::vector<std::shared_ptr<Light>> m_lights;
+	Light* m_light;
 	unsigned int m_rendered_ID {0};
 	std::unordered_map<std::string, int> m_uniform_location_cache;
 	ShaderLoader m_loader;
