@@ -1,6 +1,7 @@
 #include "epch.h"
 #include "application.h"
 
+#include <flash_light.h>
 #include <point_light.h>
 #include <utility>
 
@@ -45,13 +46,16 @@ Scene Application::CreateScene() {
 }
 
 std::shared_ptr<Light> Application::CreateDirectionalLight(const DirectionalLightParams_t& t_params) {
-	DirectionalLight dir_light(t_params);
-	return std::make_shared<DirectionalLight>(dir_light);
+	return std::make_shared<DirectionalLight>(t_params);
 }
 
 std::shared_ptr<Light> Application::CreatePointLight(const PointLightParams_t& t_params) {
-	PointLight point_light(t_params);
-	return std::make_shared<PointLight>(point_light);
+	return std::make_shared<PointLight>(t_params);
+}
+
+std::shared_ptr<Light> Application::CreateFlashLight(const FlashLightParams_t& t_params,
+	std::shared_ptr<Camera> t_camera) {
+	return std::make_shared<FlashLight>(t_params, t_camera);
 }
 
 bool Application::Run() {

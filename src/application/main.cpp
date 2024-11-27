@@ -79,11 +79,24 @@ int main() {
 		glm::vec3(0.8f, 0.8f, 0.8f),
 		glm::vec3(1.0f, 1.0f, 1.0f)
 	};
+
+	engine::FlashLightParams_t flashLightParams {
+		15.0f,
+		20.0f,
+		0.07f,
+		1.0f,
+		0.032f,
+		glm::vec3(0.2f, 0.2f, 0.2f),
+		glm::vec3(0.8f, 0.8f, 0.8f),
+		glm::vec3(1.0f, 1.0f, 1.0f)
+	};
+
 	std::vector<std::shared_ptr<engine::Light>> lights;
 	// lights.emplace_back(app.CreateDirectionalLight(light_params));
-	lights.emplace_back(app.CreatePointLight(pointLightParams));
+	// lights.emplace_back(app.CreatePointLight(pointLightParams));
+	lights.emplace_back(app.CreateFlashLight(flashLightParams, camera));
 
-	app.CreateShaderProgram("phong", "../res/shaders/phong_vertex.glsl", "../res/shaders/point_light.glsl");
+	app.CreateShaderProgram("phong", "../res/shaders/phong_vertex.glsl", "../res/shaders/flashlight.glsl");
 
 	auto forest = app.CreateScene();
 	auto gift = app.CreateScene();

@@ -20,9 +20,11 @@ public:
 	void LoadShader(const std::string& t_filepath);
 	void CreateShaderProgram();
 
-	void Update(const glm::mat4& t_projection, const glm::mat4& t_view, const glm::vec3& t_position) override;
+	void Update(const glm::mat4& t_projection, const glm::mat4& t_view,
+		const glm::vec3& t_position, const glm::vec3& t_front) override;
 	void Update(const DirectionalLightParams_t& t_light) override;
 	void Update(const PointLightParams_t& t_light) override;
+	void Update(const FlashLightParams_t& t_light, const CameraParams_t& t_camera) override;
 
 	void RemoveObservation();
 

@@ -47,7 +47,7 @@ void Camera::Notify() {
 	m_view = glm::lookAt(m_camera_position, m_camera_position + m_camera_front, m_camera_up);
 
 	for (const auto& observer : m_observers) {
-		observer->Update(m_projection, m_view, m_camera_position);
+		observer->Update(m_projection, m_view, m_camera_position, m_camera_front);
 	}
 }
 

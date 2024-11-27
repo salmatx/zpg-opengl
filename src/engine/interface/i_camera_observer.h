@@ -8,6 +8,7 @@ class ICameraObserver {
 public:
 	virtual ~ICameraObserver() = default;
 
-	virtual void Update(const glm::mat4& t_projection, const glm::mat4& t_view, const glm::vec3& t_position) = 0;
+	virtual void Update(const glm::mat4& t_projection, const glm::mat4& t_view,
+		const glm::vec3& t_position, const glm::vec3& t_front) = 0;
 };
 }

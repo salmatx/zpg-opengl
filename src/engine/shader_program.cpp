@@ -50,7 +50,8 @@ void ShaderProgram::LoadShader(const std::string& t_filepath) {
 	m_shaders.emplace_back(m_loader.LoadShader(t_filepath));
 }
 
-void ShaderProgram::Update(const glm::mat4& t_projection, const glm::mat4& t_view, const glm::vec3& t_position) {
+void ShaderProgram::Update(const glm::mat4& t_projection, const glm::mat4& t_view,
+	const glm::vec3& t_position, const glm::vec3& t_front) {
 	Bind();
 	SetUniformMat4f("u_project_matrix", t_projection);
 	SetUniformMat4f("u_view_matrix", t_view);
@@ -74,6 +75,23 @@ void ShaderProgram::Update(const PointLightParams_t& t_light) {
 	SetUniform3f("pointLights.ambient", t_light.ambient);
 	SetUniform3f("pointLights.diffuse", t_light.diffuse);
 	SetUniform3f("pointLights.specular", t_light.specular);
+}
+
+void ShaderProgram::Update(const FlashLightParams_t& t_light, const CameraParams_t& t_camera) {
+	float cut_off = glm::cos(glm::radians(t_light.cut_off_angle));
+	float outer_cut_off = glm::cos(glm::radians(t_light.outer_cut_off_angle));
+
+	Bind();
+	SetUniform3f("flashLight.position", t_camera.position);
+	SetUniform3f("flashLight.direction", t_camera.direction);
+	SetUniform1f("flashLight.cutOff", cut_off);
+	SetUniform1f("flashLight.outerCutOff", outer_cut_off);
+	SetUniform1f("flashLight.constant", t_light.constant);
+	SetUniform1f("flashLight.linear", t_light.linear);
+	SetUniform1f("flashLight.quadratic", t_light.quadratic);
+	SetUniform3f("flashLight.ambient", t_light.ambient);
+	SetUniform3f("flashLight.diffuse", t_light.diffuse);
+	SetUniform3f("flashLight.specular", t_light.specular);
 }
 
 void ShaderProgram::RemoveObservation() {
