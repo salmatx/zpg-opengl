@@ -26,8 +26,8 @@ public:
   void Detach(ICameraObserver* t_observer) override;
 
   void Update(EventType t_event, std::shared_ptr<const void> t_event_data) override;
-
   void InitCamera();
+
   void RemoveObservation(EventType t_event);
 
 private:

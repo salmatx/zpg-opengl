@@ -3,17 +3,21 @@
 #include "gl_common.h"
 
 namespace engine {
-ShaderProgram::ShaderProgram(Camera& t_camera, Light& t_light)
-	: m_camera(&t_camera),
-	m_light(&t_light),
+ShaderProgram::ShaderProgram(const std::shared_ptr<Camera>& t_camera, const std::vector<std::shared_ptr<Light>>& t_lights)
+	: m_camera(t_camera),
+	m_lights(t_lights),
 	m_loader(ShaderLoader()){
 	m_camera->Attach(this);
-	m_light->Attach(this);
+	for(auto& light : m_lights) {
+		light->Attach(this);
+	}
 }
 
 ShaderProgram::~ShaderProgram() {
 	m_camera->Detach(this);
-	m_light->Detach(this);
+	for(auto& light : m_lights) {
+		light->Detach(this);
+	}
 	GLCall(glDeleteProgram(m_rendered_ID));
 }
 
@@ -57,7 +61,9 @@ void ShaderProgram::Update(const glm::vec3& t_position, const glm::vec3& t_color
 
 void ShaderProgram::RemoveObservation() {
 	m_camera->Detach(this);
-	m_light->Detach(this);
+	for(auto& light : m_lights) {
+		light->Detach(this);
+	}
 }
 
 int ShaderProgram::GetUniformLocation(const std::string& t_name) {

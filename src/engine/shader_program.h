@@ -1,8 +1,7 @@
 #pragma once
 
-#include <light.h>
-#include <shader_loader.h>
-
+#include "directional_light.h"
+#include "shader_loader.h"
 #include "camera.h"
 #include "i_camera_observer.h"
 #include "i_shader.h"
@@ -10,7 +9,7 @@
 namespace engine {
 class ShaderProgram : public IShader, public ICameraObserver, public ILightObserver {
 public:
-	ShaderProgram(Camera& t_camera, Light& t_light);
+	ShaderProgram(const std::shared_ptr<Camera>& t_camera, const std::vector<std::shared_ptr<Light>>& t_lights);
 	ShaderProgram(const ShaderProgram& t_other) = delete;
 	ShaderProgram& operator=(const ShaderProgram& t_other) = delete;
 	~ShaderProgram();
@@ -32,8 +31,8 @@ private:
 	void SetUniform4f(const std::string& t_name, float t_v0, float t_v1, float t_v2, float t_v3) override;
 	void SetUniform3f(const std::string& t_name, const glm::vec3& t_vector);
 
-	Camera* m_camera;
-	Light* m_light;
+	std::shared_ptr<Camera> m_camera;
+	std::vector<std::shared_ptr<Light>> m_lights;
 	unsigned int m_rendered_ID {0};
 	std::unordered_map<std::string, int> m_uniform_location_cache;
 	ShaderLoader m_loader;

@@ -1,12 +1,11 @@
 #include <random>
+#include <utility>
 
 #include "engine.h"
 
 #include "tree.h"
 #include "bushes.h"
 #include "gift.h"
-#include "sphere.h"
-#include "triangle.h"
 
 using RandGenType = std::mt19937_64;
 
@@ -38,69 +37,18 @@ static void GenerateRandomObjects(engine::Scene& t_scene, const std::string& t_n
 	}
 }
 
-void InitTriangle(engine::Application& t_app, engine::Scene& t_scene) {
-	auto triangle_pos = engine::Transformation({
-			{1.0f, 0.0f, 0.0f},
-			{0.0f, 1.0f, 0.0f},
-			{3.0f, 3.0f, 3.0f},
-			270,
-			engine::TransformationOrder::TRS
-		});
-
-	t_app.UseShaderProgram(t_scene, "phong");
-	t_scene.AddObject("triangle", {triangle, sizeof(triangle), float{}, 3, float{}, 3});
-	t_scene.AddTransformation("triangle", triangle_pos);
-}
-
-void InitSpehers(engine::Application& t_app, engine::Scene& t_scene) {
-	auto sphere1 = engine::Transformation({
-			{3.0f, 0.0f, 0.0f},
-			{0.0f, 1.0f, 0.0f},
-			{1.0f, 1.0f, 1.0f},
-			0,
-			engine::TransformationOrder::TRS
-		});
-	auto sphere2 = engine::Transformation({
-			{-3.0f, 0.0f, 0.0f},
-			{0.0f, 1.0f, 0.0f},
-			{1.0f, 1.0f, 1.0f},
-			0,
-			engine::TransformationOrder::TRS
-		});
-	auto sphere3 = engine::Transformation({
-			{0.0f, 0.0f, 3.0f},
-			{0.0f, 1.0f, 0.0f},
-			{1.0f, 1.0f, 1.0f},
-			0,
-			engine::TransformationOrder::TRS
-		});
-	auto sphere4 = engine::Transformation({
-			{0.0f, 0.0f, -3.0f},
-			{0.0f, 1.0f, 0.0f},
-			{1.0f, 1.0f, 1.0f},
-			0,
-			engine::TransformationOrder::TRS
-		});
-
-
-	t_app.UseShaderProgram(t_scene, "phong");
-	t_scene.AddObject("sphere", {sphere, sizeof(sphere), float{}, 3, float{}, 3});
-	t_scene.AddTransformation("sphere", sphere1);
-	t_scene.AddTransformation("sphere", sphere2);
-	t_scene.AddTransformation("sphere", sphere3);
-	t_scene.AddTransformation("sphere", sphere4);
-}
-
-void InitForest(engine::Application& t_app, engine::Scene& t_scene) {
-	t_app.UseShaderProgram(t_scene, "phong");
+void InitForest(engine::Application& t_app, engine::Scene& t_scene, std::shared_ptr<engine::Camera> t_camera,
+	std::vector<std::shared_ptr<engine::Light>> t_lights) {
+	t_app.UseShaderProgram(t_scene, "phong", t_camera, t_lights);
 	t_scene.AddObject("tree", {tree, sizeof(tree), float{}, 3, float{}, 3});
 	t_scene.AddObject("bushes", {bushes, sizeof(bushes), float{}, 3, float{}, 3});
 	GenerateRandomObjects(t_scene, "tree", 150);
 	GenerateRandomObjects(t_scene, "bushes", 80);
 }
 
-void InitGift(engine::Application& t_app, engine::Scene& t_scene) {
-	t_app.UseShaderProgram(t_scene, "phong");
+void InitGift(engine::Application& t_app, engine::Scene& t_scene, std::shared_ptr<engine::Camera> t_camera,
+std::vector<std::shared_ptr<engine::Light>> t_lights) {
+	t_app.UseShaderProgram(t_scene, "phong", t_camera, t_lights);
 	t_scene.AddObject("gift", {gift, sizeof(gift), float{}, 3, float{}, 3});
 }
 
@@ -113,26 +61,22 @@ int main() {
 		{0.0f, 0.0f, -1.0f},
 		{0.0f, 1.0f, 0.0f}
 	};
-	app.CreateCamera(position, depth);
+	auto camera = app.CreateCamera(position, depth);
 
-	engine::LightParams light_params{
+	engine::DirectionalLightParams_t light_params{
 		{300.0f, 1000.0f, 0.0f},
 		{1.0f, 1.0f, 1.0f}
 	};
-	auto light = app.CreateLight(light_params);
-	app.UseLight(light);
+	std::vector<std::shared_ptr<engine::Light>> lights;
+	lights.emplace_back(app.CreateDirectionalLight(light_params));
 
 	app.CreateShaderProgram("phong", "../res/shaders/phong_vertex.glsl", "../res/shaders/phong_fragment.glsl");
 
-	auto triangle = app.CreateScene();
-	auto spheres = app.CreateScene();
 	auto forest = app.CreateScene();
 	auto gift = app.CreateScene();
 
-	InitTriangle(app, triangle);
-	InitSpehers(app, spheres);
-	InitForest(app, forest);
-	InitGift(app, gift);
+	InitForest(app, forest, camera, lights);
+	InitGift(app, gift, camera, lights);
 
 	float alpha = 0.0f;
 	while (app.Run()) {
@@ -152,9 +96,6 @@ int main() {
 		forest.DrawScene();
 		gift.DrawScene();
 
-		// spheres.DrawScene();
-		//
-		// triangle.DrawScene();
 	}
 	return 0;
 }

@@ -1,33 +1,32 @@
 #pragma once
 
-#include <i_light_subject.h>
+#include "i_light_observer.h"
 
 #include "epch.h"
 
 namespace engine {
 
-struct LightParams {
+struct LightParams_t {
 	glm::vec3 position;
 	glm::vec3 color;
 };
 
-class Light : public ILightSubject {
+class Light {
 public:
-	Light(const LightParams& t_params);
+	explicit Light(const LightParams_t& t_params);
+	virtual ~Light() = default;
 
+	virtual void Notify();
+
+	void Attach(ILightObserver* t_observer);
+	void Detach(ILightObserver* t_observer);
+	void InitLight();
 	void SetPosition(const glm::vec3& t_position);
 	void SetColor(const glm::vec3& t_color);
-	void InitLight();
-
-	void Attach(ILightObserver* observer) override;
-	void Detach(ILightObserver* observer) override;
 
 private:
-	void Notify() override;
-
 	std::list<ILightObserver*> m_observers;
 	glm::vec3 m_position;
 	glm::vec3 m_color;
 };
 }
-
