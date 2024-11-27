@@ -64,17 +64,26 @@ int main() {
 	auto camera = app.CreateCamera(position, depth);
 
 	engine::DirectionalLightParams_t light_params{
-		// {300.0f, 1000.0f, 0.0f},
-		// {1.0f, 1.0f, 1.0f},
 		{-0.2f, -1.0f, -0.3f},
 		{0.05f, 0.05f, 0.05f},
 		{0.4f, 0.4f, 0.4f},
 		{0.5f, 0.5f, 0.5f}
 	};
-	std::vector<std::shared_ptr<engine::Light>> lights;
-	lights.emplace_back(app.CreateDirectionalLight(light_params));
 
-	app.CreateShaderProgram("phong", "../res/shaders/phong_vertex.glsl", "../res/shaders/dir_light.glsl");
+	engine::PointLightParams_t pointLightParams {
+		glm::vec3(0.0f, 10.0f, 5.0f),
+		1.0f,
+		0.09f,
+		0.032f,
+		glm::vec3(0.1f, 0.1f, 0.1f),
+		glm::vec3(0.8f, 0.8f, 0.8f),
+		glm::vec3(1.0f, 1.0f, 1.0f)
+	};
+	std::vector<std::shared_ptr<engine::Light>> lights;
+	// lights.emplace_back(app.CreateDirectionalLight(light_params));
+	lights.emplace_back(app.CreatePointLight(pointLightParams));
+
+	app.CreateShaderProgram("phong", "../res/shaders/phong_vertex.glsl", "../res/shaders/point_light.glsl");
 
 	auto forest = app.CreateScene();
 	auto gift = app.CreateScene();

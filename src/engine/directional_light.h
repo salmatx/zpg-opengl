@@ -2,8 +2,6 @@
 
 #include <light.h>
 
-#include "epch.h"
-
 namespace engine {
 
 class DirectionalLight : public Light {

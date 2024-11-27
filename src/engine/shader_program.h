@@ -22,6 +22,7 @@ public:
 
 	void Update(const glm::mat4& t_projection, const glm::mat4& t_view, const glm::vec3& t_position) override;
 	void Update(const DirectionalLightParams_t& t_light) override;
+	void Update(const PointLightParams_t& t_light) override;
 
 	void RemoveObservation();
 
@@ -30,6 +31,7 @@ private:
 	std::optional<unsigned int> CompileShaderProgram(unsigned int t_type, const std::string& t_source);
 	void SetUniform4f(const std::string& t_name, float t_v0, float t_v1, float t_v2, float t_v3) override;
 	void SetUniform3f(const std::string& t_name, const glm::vec3& t_vector);
+	void SetUniform1f(const std::string& t_name, float t_param);
 
 	std::shared_ptr<Camera> m_camera;
 	std::vector<std::shared_ptr<Light>> m_lights;

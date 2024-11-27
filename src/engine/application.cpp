@@ -1,6 +1,7 @@
 #include "epch.h"
 #include "application.h"
 
+#include <point_light.h>
 #include <utility>
 
 namespace engine {
@@ -46,6 +47,11 @@ Scene Application::CreateScene() {
 std::shared_ptr<Light> Application::CreateDirectionalLight(const DirectionalLightParams_t& t_params) {
 	DirectionalLight dir_light(t_params);
 	return std::make_shared<DirectionalLight>(dir_light);
+}
+
+std::shared_ptr<Light> Application::CreatePointLight(const PointLightParams_t& t_params) {
+	PointLight point_light(t_params);
+	return std::make_shared<PointLight>(point_light);
 }
 
 bool Application::Run() {

@@ -38,6 +38,10 @@ void ShaderProgram::SetUniform3f(const std::string& t_name, const glm::vec3& t_v
 	GLCall(glUniform3f(GetUniformLocation(t_name), t_vector.x, t_vector.y, t_vector.z));
 }
 
+void ShaderProgram::SetUniform1f(const std::string& t_name, float t_param) {
+	GLCall(glUniform1f(GetUniformLocation(t_name), t_param));
+}
+
 void ShaderProgram::SetUniformMat4f(const std::string& t_name, const glm::mat4& t_matrix) {
 	GLCall(glUniformMatrix4fv(this->GetUniformLocation(t_name), 1, GL_FALSE, glm::value_ptr(t_matrix)));
 }
@@ -59,6 +63,17 @@ void ShaderProgram::Update(const DirectionalLightParams_t& t_light) {
 	SetUniform3f("dirLight.ambient", t_light.ambient);
 	SetUniform3f("dirLight.diffuse", t_light.diffuse);
 	SetUniform3f("dirLight.specular", t_light.specular);
+}
+
+void ShaderProgram::Update(const PointLightParams_t& t_light) {
+	Bind();
+	SetUniform3f("pointLights.position", t_light.position);
+	SetUniform1f("pointLights.constant", t_light.constant);
+	SetUniform1f("pointLights.linear", t_light.linear);
+	SetUniform1f("pointLights.quadratic", t_light.quadratic);
+	SetUniform3f("pointLights.ambient", t_light.ambient);
+	SetUniform3f("pointLights.diffuse", t_light.diffuse);
+	SetUniform3f("pointLights.specular", t_light.specular);
 }
 
 void ShaderProgram::RemoveObservation() {

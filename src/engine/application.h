@@ -16,6 +16,7 @@ public:
 	std::shared_ptr<Camera> CreateCamera(const CameraPosition& t_position, const CameraDepth& t_depth);
 	Scene CreateScene();
 	std::shared_ptr<Light> CreateDirectionalLight(const DirectionalLightParams_t& t_params);
+	std::shared_ptr<Light> CreatePointLight(const PointLightParams_t& t_params);
 	bool Run();
 
 	template<typename... Args>
