@@ -45,7 +45,7 @@ Scene Application::CreateScene() {
 
 std::shared_ptr<Light> Application::CreateDirectionalLight(const DirectionalLightParams_t& t_params) {
 	DirectionalLight dir_light(t_params);
-	return std::make_shared<Light>(dir_light);
+	return std::make_shared<DirectionalLight>(dir_light);
 }
 
 bool Application::Run() {

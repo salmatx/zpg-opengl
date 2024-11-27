@@ -1,6 +1,21 @@
 #include "directional_light.h"
 
 namespace engine {
-DirectionalLight::DirectionalLight(const DirectionalLightParams_t& t_params)
-	: Light({t_params.position, t_params.color}) {}
+DirectionalLight::DirectionalLight(const DirectionalLightParams_t& t_params) {
+	m_params.direction = t_params.direction;
+	m_params.ambient = t_params.ambient;
+	m_params.diffuse = t_params.diffuse;
+	m_params.specular = t_params.specular;
+}
+
+void DirectionalLight::Notify() {
+	auto observers = GetLightObservers();
+	for (auto& observer : observers) {
+		observer->Update(m_params);
+	}
+}
+
+void DirectionalLight::InitLight() {
+	Notify();
+}
 }

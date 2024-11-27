@@ -53,10 +53,12 @@ void ShaderProgram::Update(const glm::mat4& t_projection, const glm::mat4& t_vie
 	SetUniform3f("u_view_position", t_position);
 }
 
-void ShaderProgram::Update(const glm::vec3& t_position, const glm::vec3& t_color) {
+void ShaderProgram::Update(const DirectionalLightParams_t& t_light) {
 	Bind();
-	SetUniform3f("u_light_position", t_position);
-	SetUniform3f("u_light_color", t_color);
+	SetUniform3f("dirLight.direction", t_light.direction);
+	SetUniform3f("dirLight.ambient", t_light.ambient);
+	SetUniform3f("dirLight.diffuse", t_light.diffuse);
+	SetUniform3f("dirLight.specular", t_light.specular);
 }
 
 void ShaderProgram::RemoveObservation() {

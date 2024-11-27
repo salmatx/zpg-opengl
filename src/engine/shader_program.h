@@ -21,7 +21,7 @@ public:
 	void CreateShaderProgram();
 
 	void Update(const glm::mat4& t_projection, const glm::mat4& t_view, const glm::vec3& t_position) override;
-	void Update(const glm::vec3& t_position, const glm::vec3& t_color) override;
+	void Update(const DirectionalLightParams_t& t_light) override;
 
 	void RemoveObservation();
 

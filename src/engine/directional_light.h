@@ -6,14 +6,15 @@
 
 namespace engine {
 
-struct DirectionalLightParams_t {
-	glm::vec3 position;
-	glm::vec3 color;
-};
-
 class DirectionalLight : public Light {
 public:
 	explicit DirectionalLight(const DirectionalLightParams_t& t_params);
+
+	void Notify() override;
+	void InitLight() override;
+
+private:
+	DirectionalLightParams_t m_params {};
 };
 }
 
