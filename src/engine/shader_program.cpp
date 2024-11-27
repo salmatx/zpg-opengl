@@ -1,15 +1,21 @@
 #include "epch.h"
 #include "shader_program.h"
+
+#include <directional_light.h>
+#include <flash_light.h>
+#include <point_light.h>
+
 #include "gl_common.h"
 
 namespace engine {
 ShaderProgram::ShaderProgram(const std::shared_ptr<Camera>& t_camera, const std::vector<std::shared_ptr<Light>>& t_lights)
 	: m_camera(t_camera),
 	m_lights(t_lights),
-	m_loader(ShaderLoader()){
+	m_loader(ShaderLoader()) {
 	m_camera->Attach(this);
 	for(auto& light : m_lights) {
 		light->Attach(this);
+		SetIndex(*light);
 	}
 }
 
@@ -42,6 +48,24 @@ void ShaderProgram::SetUniform1f(const std::string& t_name, float t_param) {
 	GLCall(glUniform1f(GetUniformLocation(t_name), t_param));
 }
 
+void ShaderProgram::SetUniform1i(const std::string& t_name, int t_param) {
+	GLCall(glUniform1i(GetUniformLocation(t_name), t_param));
+}
+
+void ShaderProgram::SetIndex(const Light& t_light) {
+	switch (t_light.GetType()) {
+	case LightType_t::Directional:
+		m_dir_lights.emplace_back(t_light.GetId());
+		break;
+	case LightType_t::Point:
+		m_point_lights.emplace_back(t_light.GetId());
+		break;
+	case LightType_t::Flashlight:
+		m_flash_lights.emplace_back(t_light.GetId());
+		break;
+	}
+}
+
 void ShaderProgram::SetUniformMat4f(const std::string& t_name, const glm::mat4& t_matrix) {
 	GLCall(glUniformMatrix4fv(this->GetUniformLocation(t_name), 1, GL_FALSE, glm::value_ptr(t_matrix)));
 }
@@ -58,40 +82,75 @@ void ShaderProgram::Update(const glm::mat4& t_projection, const glm::mat4& t_vie
 	SetUniform3f("u_view_position", t_position);
 }
 
-void ShaderProgram::Update(const DirectionalLightParams_t& t_light) {
+void ShaderProgram::Update(const DirectionalLight& t_light) {
 	Bind();
-	SetUniform3f("dirLight.direction", t_light.direction);
-	SetUniform3f("dirLight.ambient", t_light.ambient);
-	SetUniform3f("dirLight.diffuse", t_light.diffuse);
-	SetUniform3f("dirLight.specular", t_light.specular);
+
+	auto it = std::ranges::find(m_dir_lights, t_light.GetId());
+	if (it == m_dir_lights.end()) {
+		return;
+	}
+
+	const int index = *it;
+	auto [direction, ambient, diffuse, specular] = t_light.GetParams();
+
+	const std::string prefix = "u_dirLights[" + std::to_string(index) + "]";
+
+	SetUniform3f(prefix + ".direction", direction);
+	SetUniform3f(prefix + ".ambient", ambient);
+	SetUniform3f(prefix + ".diffuse", diffuse);
+	SetUniform3f(prefix + ".specular", specular);
 }
 
-void ShaderProgram::Update(const PointLightParams_t& t_light) {
+void ShaderProgram::Update(const PointLight& t_light) {
 	Bind();
-	SetUniform3f("pointLights.position", t_light.position);
-	SetUniform1f("pointLights.constant", t_light.constant);
-	SetUniform1f("pointLights.linear", t_light.linear);
-	SetUniform1f("pointLights.quadratic", t_light.quadratic);
-	SetUniform3f("pointLights.ambient", t_light.ambient);
-	SetUniform3f("pointLights.diffuse", t_light.diffuse);
-	SetUniform3f("pointLights.specular", t_light.specular);
+
+	auto it = std::ranges::find(m_point_lights, t_light.GetId());
+	if (it == m_point_lights.end()) {
+		return;
+	}
+
+	const int index = *it;
+	auto [position, constant, linear, quadratic,
+		ambient, diffuse, specular] = t_light.GetParams();
+
+	const std::string prefix = "u_pointLights[" + std::to_string(index) + "]";
+
+	SetUniform3f(prefix + ".position", position);
+	SetUniform1f(prefix + ".constant", constant);
+	SetUniform1f(prefix + ".linear", linear);
+	SetUniform1f(prefix + ".quadratic", quadratic);
+	SetUniform3f(prefix + ".ambient", ambient);
+	SetUniform3f(prefix + ".diffuse", diffuse);
+	SetUniform3f(prefix + ".specular", specular);
 }
 
-void ShaderProgram::Update(const FlashLightParams_t& t_light, const CameraParams_t& t_camera) {
-	float cut_off = glm::cos(glm::radians(t_light.cut_off_angle));
-	float outer_cut_off = glm::cos(glm::radians(t_light.outer_cut_off_angle));
-
+void ShaderProgram::Update(const FlashLight& t_light, const CameraParams_t& t_camera) {
 	Bind();
-	SetUniform3f("flashLight.position", t_camera.position);
-	SetUniform3f("flashLight.direction", t_camera.direction);
-	SetUniform1f("flashLight.cutOff", cut_off);
-	SetUniform1f("flashLight.outerCutOff", outer_cut_off);
-	SetUniform1f("flashLight.constant", t_light.constant);
-	SetUniform1f("flashLight.linear", t_light.linear);
-	SetUniform1f("flashLight.quadratic", t_light.quadratic);
-	SetUniform3f("flashLight.ambient", t_light.ambient);
-	SetUniform3f("flashLight.diffuse", t_light.diffuse);
-	SetUniform3f("flashLight.specular", t_light.specular);
+
+	auto it = std::ranges::find(m_flash_lights, t_light.GetId());
+	if (it == m_flash_lights.end()) {
+		return;
+	}
+
+	const int index = *it;
+	auto [cut_off_angle, outer_cut_off_angle, constant,linear,
+		quadratic,ambient, diffuse, specular] = t_light.GetParams();
+
+	const float cut_off = glm::cos(glm::radians(cut_off_angle));
+	const float outer_cut_off = glm::cos(glm::radians(outer_cut_off_angle));
+
+	const std::string prefix = "u_flashLights[" + std::to_string(index) + "]";
+
+	SetUniform3f(prefix + ".position", t_camera.position);
+	SetUniform3f(prefix + ".direction", t_camera.direction);
+	SetUniform1f(prefix + ".cutOff", cut_off);
+	SetUniform1f(prefix + ".outerCutOff", outer_cut_off);
+	SetUniform1f(prefix + ".constant", constant);
+	SetUniform1f(prefix + ".linear", linear);
+	SetUniform1f(prefix + ".quadratic", quadratic);
+	SetUniform3f(prefix + ".ambient", ambient);
+	SetUniform3f(prefix + ".diffuse", diffuse);
+	SetUniform3f(prefix + ".specular", specular);
 }
 
 void ShaderProgram::RemoveObservation() {
@@ -137,6 +196,13 @@ std::optional<unsigned int> ShaderProgram::CompileShaderProgram(const unsigned i
 	return vertex_shader_ID;
 }
 
+void ShaderProgram::SetNumberOfLights() {
+	Bind();
+	SetUniform1i("u_dirLights_count", m_dir_lights.size());
+	SetUniform1i("u_pointLights_count", m_point_lights.size());
+	SetUniform1i("u_flashLights_count", m_flash_lights.size());
+}
+
 void ShaderProgram::CreateShaderProgram() {
 	GLCall(unsigned int shader_program = glCreateProgram());
 
@@ -150,5 +216,7 @@ void ShaderProgram::CreateShaderProgram() {
 	GLCall(glValidateProgram(shader_program));
 
 	m_rendered_ID = shader_program;
+
+	SetNumberOfLights();
 }
 }

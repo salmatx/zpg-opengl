@@ -8,7 +8,7 @@ namespace engine {
 
 class Light {
 public:
-	Light() = default;
+	Light(LightType_t t_type);
 	virtual ~Light() = default;
 
 	virtual void Notify() = 0;
@@ -18,8 +18,14 @@ public:
 	void Detach(ILightObserver* t_observer);
 
 	std::list<ILightObserver*>& GetLightObservers();
+	[[nodiscard]] int GetId() const {return m_id;}
+	[[nodiscard]] LightType_t GetType() const {return m_type;}
 
 private:
+	static int s_id;
+
+	LightType_t m_type;
 	std::list<ILightObserver*> m_observers;
+	int m_id;
 };
 }

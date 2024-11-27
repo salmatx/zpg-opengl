@@ -11,6 +11,8 @@ public:
 	void Notify() override;
 	void InitLight() override;
 
+	[[nodiscard]] PointLightParams_t GetParams() const {return m_params;}
+
 private:
 	PointLightParams_t m_params {};
 };

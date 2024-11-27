@@ -3,6 +3,10 @@
 #include "epch.h"
 
 namespace engine {
+class DirectionalLight;
+class PointLight;
+class FlashLight;
+
 struct DirectionalLightParams_t {
 	glm::vec3 direction;
 	glm::vec3 ambient;
@@ -40,12 +44,18 @@ struct CameraParams_t {
 	glm::vec3 direction;
 };
 
+enum class LightType_t {
+	Directional,
+	Point,
+	Flashlight,
+};
+
 class ILightObserver {
 public:
 	virtual ~ILightObserver() = default;
 
-	virtual void Update(const DirectionalLightParams_t& t_light) = 0;
-	virtual void Update(const PointLightParams_t& t_light) = 0;
-	virtual void Update(const FlashLightParams_t& t_light, const CameraParams_t& t_camera) = 0;
+	virtual void Update(const DirectionalLight& t_light) = 0;
+	virtual void Update(const PointLight& t_light) = 0;
+	virtual void Update(const FlashLight& t_light, const CameraParams_t& t_camera) = 0;
 };
 }

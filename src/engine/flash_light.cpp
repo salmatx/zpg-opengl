@@ -2,7 +2,8 @@
 
 namespace engine {
 FlashLight::FlashLight(const FlashLightParams_t& t_params, const std::shared_ptr<Camera>& t_camera)
-	: m_camera(t_camera) {
+	: Light(LightType_t::Flashlight),
+	m_camera(t_camera) {
 	m_params.cut_off_angle = t_params.cut_off_angle;
 	m_params.outer_cut_off_angle = t_params.outer_cut_off_angle;
 	m_params.constant = t_params.constant;
@@ -22,7 +23,7 @@ FlashLight::~FlashLight() {
 void FlashLight::Notify() {
 	auto observers = GetLightObservers();
 	for (auto& observer : observers) {
-		observer->Update(m_params, m_camera_params);
+		observer->Update(*this, m_camera_params);
 	}
 }
 

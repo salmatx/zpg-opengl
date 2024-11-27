@@ -11,6 +11,8 @@ public:
 	void Notify() override;
 	void InitLight() override;
 
+	[[nodiscard]] DirectionalLightParams_t GetParams() const {return m_params;}
+
 private:
 	DirectionalLightParams_t m_params {};
 };

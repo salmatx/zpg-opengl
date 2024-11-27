@@ -37,6 +37,13 @@ void Application::UseShaderProgram(Scene& t_scene, const std::string& t_name, st
 	}
 }
 
+void Application::RemoveShaderProgram(const std::string& t_name) {
+	auto it = m_shader_programs.find(t_name);
+	if (it != m_shader_programs.end()) {
+		m_shader_programs.erase(it);
+	}
+}
+
 std::shared_ptr<Camera> Application::CreateCamera(const CameraPosition& t_position, const CameraDepth& t_depth) {
 	return std::make_shared<Camera>(*m_window, m_scr_width, m_scr_height, t_depth, t_position);
 }

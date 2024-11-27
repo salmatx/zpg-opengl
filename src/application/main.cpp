@@ -92,11 +92,11 @@ int main() {
 	};
 
 	std::vector<std::shared_ptr<engine::Light>> lights;
-	// lights.emplace_back(app.CreateDirectionalLight(light_params));
-	// lights.emplace_back(app.CreatePointLight(pointLightParams));
-	lights.emplace_back(app.CreateFlashLight(flashLightParams, camera));
+	lights.emplace_back(app.CreateDirectionalLight(light_params));
+	lights.emplace_back(app.CreatePointLight(pointLightParams));
+	// lights.emplace_back(app.CreateFlashLight(flashLightParams, camera));
 
-	app.CreateShaderProgram("phong", "../res/shaders/phong_vertex.glsl", "../res/shaders/flashlight.glsl");
+	app.CreateShaderProgram("phong", "../res/shaders/phong_vertex.glsl", "../res/shaders/multiple_lights_fragment.glsl");
 
 	auto forest = app.CreateScene();
 	auto gift = app.CreateScene();

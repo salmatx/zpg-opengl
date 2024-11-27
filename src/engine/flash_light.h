@@ -17,6 +17,8 @@ public:
 	void Update(const glm::mat4& t_projection, const glm::mat4& t_view,
 		const glm::vec3& t_position, const glm::vec3& t_front) override;
 
+	[[nodiscard]] FlashLightParams_t GetParams() const {return m_params;}
+
 private:
 	FlashLightParams_t m_params {};
 	CameraParams_t m_camera_params {};

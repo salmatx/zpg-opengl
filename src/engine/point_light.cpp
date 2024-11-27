@@ -1,7 +1,8 @@
 #include "point_light.h"
 
 namespace engine {
-PointLight::PointLight(const PointLightParams_t& t_params) {
+PointLight::PointLight(const PointLightParams_t& t_params)
+	: Light(LightType_t::Point){
 	m_params.position = t_params.position;
 	m_params.constant = t_params.constant;
 	m_params.linear = t_params.linear;
@@ -14,7 +15,7 @@ PointLight::PointLight(const PointLightParams_t& t_params) {
 void PointLight::Notify() {
 	auto observers = GetLightObservers();
 	for (auto& observer : observers) {
-		observer->Update(m_params);
+		observer->Update(*this);
 	}
 }
 

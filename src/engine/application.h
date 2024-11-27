@@ -13,6 +13,7 @@ public:
 	~Application() = default;
 	void UseShaderProgram(Scene& t_scene, const std::string& t_name, std::shared_ptr<Camera> t_camera,
 		std::vector<std::shared_ptr<Light>> t_lights);
+	void RemoveShaderProgram(const std::string& t_name);
 	std::shared_ptr<Camera> CreateCamera(const CameraPosition& t_position, const CameraDepth& t_depth);
 	Scene CreateScene();
 	std::shared_ptr<Light> CreateDirectionalLight(const DirectionalLightParams_t& t_params);
