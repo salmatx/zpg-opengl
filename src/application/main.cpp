@@ -6,6 +6,7 @@
 #include "tree.h"
 #include "bushes.h"
 #include "gift.h"
+#include "sphere.h"
 
 using RandGenType = std::mt19937_64;
 
@@ -37,6 +38,15 @@ static void GenerateRandomObjects(engine::Scene& t_scene, const std::string& t_n
 	}
 }
 
+std::vector<glm::vec3> GenerateRandomVertices(const int t_count) {
+	auto vertices = std::vector<glm::vec3>(t_count);
+	for (int i = 0; i < t_count; ++i) {
+		vertices.emplace_back(uniform_position(rand_gen), 7.0f, uniform_position(rand_gen));
+	}
+
+	return vertices;
+}
+
 void InitForest(engine::Application& t_app, engine::Scene& t_scene, std::shared_ptr<engine::Camera> t_camera,
 	std::vector<std::shared_ptr<engine::Light>> t_lights) {
 	t_app.UseShaderProgram(t_scene, "phong", t_camera, t_lights);
@@ -50,6 +60,40 @@ void InitGift(engine::Application& t_app, engine::Scene& t_scene, std::shared_pt
 std::vector<std::shared_ptr<engine::Light>> t_lights) {
 	t_app.UseShaderProgram(t_scene, "phong", t_camera, t_lights);
 	t_scene.AddObject("gift", {gift, sizeof(gift), float{}, 3, float{}, 3});
+}
+
+void GenerateFireFlights(engine::Application& t_app, std::vector<std::shared_ptr<engine::Light>>& t_lights, const std::vector<glm::vec3>& t_positions) {
+	for (const auto& position : t_positions) {
+		engine::PointLightParams_t pointLightParams {
+				position,
+				1.0f,
+				0.09f,
+				0.032f,
+				glm::vec3(0.05f, 0.05f, 0.05f),
+				glm::vec3(0.9f, 0.9f, 0.9f),
+				glm::vec3(1.0f, 1.0f, 1.0f)
+			};
+		t_lights.emplace_back(t_app.CreatePointLight(pointLightParams));
+	}
+}
+
+void InitSpehre(engine::Application& t_app, engine::Scene& t_scene, std::shared_ptr<engine::Camera> t_camera,
+	std::vector<std::shared_ptr<engine::Light>>& t_lights, const std::vector<glm::vec3>& t_positions) {
+	t_app.UseShaderProgram(t_scene, "phong", t_camera, t_lights);
+	t_scene.AddObject("sphere", {sphere, sizeof(sphere), float{}, 3, float{}, 3});
+
+	for (const auto& position : t_positions) {
+
+		auto transformation = engine::Transformation({
+			position,
+			{0.0f, 1.0f, 0.0f},
+			{0.1f, 0.1f, 0.1f},
+			0,
+			engine::TransformationOrder::RTS
+		});
+
+		t_scene.AddTransformation("sphere", transformation);
+	}
 }
 
 int main() {
@@ -70,50 +114,32 @@ int main() {
 		{0.5f, 0.5f, 0.5f}
 	};
 
-	engine::PointLightParams_t pointLightParams {
-		glm::vec3(0.0f, 10.0f, 5.0f),
-		1.0f,
-		0.09f,
-		0.032f,
-		glm::vec3(0.05f, 0.05f, 0.05f),
-		glm::vec3(0.9f, 0.9f, 0.9f),
-		glm::vec3(1.0f, 1.0f, 1.0f)
-	};
-
-	engine::PointLightParams_t pointLightParams1 {
-		glm::vec3(50.0f, 10.0f, 5.0f),
-		1.0f,
-		0.09f,
-		0.032f,
-		glm::vec3(0.05f, 0.05f, 0.05f),
-		glm::vec3(0.9f, 0.9f, 0.9f),
-		glm::vec3(1.0f, 1.0f, 1.0f)
-	};
-
 	engine::FlashLightParams_t flashLightParams {
 		12.5f,
 		17.5f,
 		0.07f,
 		1.0f,
 		0.032f,
-		glm::vec3(0.2f, 0.2f, 0.2f),
-		glm::vec3(0.8f, 0.8f, 0.8f),
-		glm::vec3(1.0f, 1.0f, 1.0f)
+		{0.2f, 0.2f, 0.2f},
+		{0.8f, 0.8f, 0.8f},
+		{1.0f, 1.0f, 1.0f}
 	};
 
+	auto positions = GenerateRandomVertices(10);
 	std::vector<std::shared_ptr<engine::Light>> lights;
 	lights.emplace_back(app.CreateDirectionalLight(light_params));
-	lights.emplace_back(app.CreatePointLight(pointLightParams));
-	lights.emplace_back(app.CreatePointLight(pointLightParams1));
 	lights.emplace_back(app.CreateFlashLight(flashLightParams, camera));
+	GenerateFireFlights(app, lights, positions);
 
 	app.CreateShaderProgram("phong", "../res/shaders/phong_vertex.glsl", "../res/shaders/multiple_lights_fragment.glsl");
 
 	auto forest = app.CreateScene();
 	auto gift = app.CreateScene();
+	auto sphere = app.CreateScene();
 
 	InitForest(app, forest, camera, lights);
 	InitGift(app, gift, camera, lights);
+	InitSpehre(app, sphere, camera, lights, positions);
 
 	float alpha = 0.0f;
 	while (app.Run()) {
@@ -121,7 +147,7 @@ int main() {
 
 		alpha += 1.0f;
 		auto transformation = engine::Transformation({
-			{0.0, 15.0, -3.0},
+			{0.0, 20.0, -3.0},
 			{0.0f, 1.0f, 0.0f},
 			{8.0, 8.0, 8.0},
 			alpha,
@@ -132,7 +158,7 @@ int main() {
 
 		forest.DrawScene();
 		gift.DrawScene();
-
+		sphere.DrawScene();
 	}
 	return 0;
 }

@@ -2,7 +2,7 @@
 #version 330 core
 
 #define MAX_DIR_LIGHTS 10
-#define MAX_POINT_LIGHTS 10
+#define MAX_POINT_LIGHTS 100
 #define MAX_FLASH_LIGHTS 10
 
 struct DirLight {
