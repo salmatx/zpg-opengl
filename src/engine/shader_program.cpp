@@ -90,7 +90,7 @@ void ShaderProgram::Update(const DirectionalLight& t_light) {
 		return;
 	}
 
-	const int index = *it;
+	const int index = std::distance(m_dir_lights.begin(), it);
 	auto [direction, ambient, diffuse, specular] = t_light.GetParams();
 
 	const std::string prefix = "u_dirLights[" + std::to_string(index) + "]";
@@ -109,7 +109,7 @@ void ShaderProgram::Update(const PointLight& t_light) {
 		return;
 	}
 
-	const int index = *it;
+	const int index = std::distance(m_point_lights.begin(), it);
 	auto [position, constant, linear, quadratic,
 		ambient, diffuse, specular] = t_light.GetParams();
 
@@ -132,7 +132,7 @@ void ShaderProgram::Update(const FlashLight& t_light, const CameraParams_t& t_ca
 		return;
 	}
 
-	const int index = *it;
+	const int index = std::distance(m_flash_lights.begin(), it);
 	auto [cut_off_angle, outer_cut_off_angle, constant,linear,
 		quadratic,ambient, diffuse, specular] = t_light.GetParams();
 

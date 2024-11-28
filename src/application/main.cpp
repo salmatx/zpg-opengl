@@ -65,8 +65,8 @@ int main() {
 
 	engine::DirectionalLightParams_t light_params{
 		{-0.2f, -1.0f, -0.3f},
-		{0.05f, 0.05f, 0.05f},
-		{0.4f, 0.4f, 0.4f},
+		{0.02f, 0.02f, 0.02f},
+		{0.1f, 0.1f, 0.1f},
 		{0.5f, 0.5f, 0.5f}
 	};
 
@@ -75,8 +75,8 @@ int main() {
 		1.0f,
 		0.09f,
 		0.032f,
-		glm::vec3(0.1f, 0.1f, 0.1f),
-		glm::vec3(0.8f, 0.8f, 0.8f),
+		glm::vec3(0.05f, 0.05f, 0.05f),
+		glm::vec3(0.9f, 0.9f, 0.9f),
 		glm::vec3(1.0f, 1.0f, 1.0f)
 	};
 
@@ -94,7 +94,7 @@ int main() {
 	std::vector<std::shared_ptr<engine::Light>> lights;
 	lights.emplace_back(app.CreateDirectionalLight(light_params));
 	lights.emplace_back(app.CreatePointLight(pointLightParams));
-	// lights.emplace_back(app.CreateFlashLight(flashLightParams, camera));
+	lights.emplace_back(app.CreateFlashLight(flashLightParams, camera));
 
 	app.CreateShaderProgram("phong", "../res/shaders/phong_vertex.glsl", "../res/shaders/multiple_lights_fragment.glsl");
 
