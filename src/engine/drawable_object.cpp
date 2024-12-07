@@ -49,7 +49,7 @@ void DrawableObject::Draw(const IndexBuffer& t_ibo, std::shared_ptr<ShaderProgra
 		model = transformation->Transform(model);
 		t_shader->SetUniformMat4f("u_model_matrix", model);
 		if (count == 3) {
-			GLCall(glDrawArrays(GL_TRIANGLES, 0, m_model->GetCount()));
+			GLCall(glDrawElements(GL_TRIANGLES, t_ibo.GetCount(), GL_UNSIGNED_INT, nullptr));
 			model = glm::mat4(1.0f);
 			count = 0;
 		}
