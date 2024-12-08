@@ -62,31 +62,49 @@ std::vector<glm::vec3> GenerateRandomVertices(const int t_count) {
 	return vertices;
 }
 
-void InitForest(engine::Application& t_app, engine::Scene& t_scene, std::shared_ptr<engine::Camera> t_camera,
-	std::vector<std::shared_ptr<engine::Light>> t_lights) {
-	auto shader = t_app.UseShaderProgram("phong", t_camera, t_lights);
-	t_scene.AddObject("tree", std::make_unique<engine::DrawableObject>
-		(tree, shader, sizeof(tree), float{}, 3, float{}, 3));
-	t_scene.AddObject("bushes", std::make_unique<engine::DrawableObject>
-		(bushes, shader, sizeof(bushes), float{}, 3, float{}, 3));
-	GenerateRandomObjects(t_scene, "tree", 150);
-	GenerateRandomObjects(t_scene, "bushes", 80);
-	t_scene.AddTexture("tree", {"../res/textures/wooden_fence.png"});
-	t_scene.AddTexture("bushes", {"../res/textures/wooden_fence.png"});
-}
+// void InitForest(engine::Application& t_app, engine::Scene& t_scene, std::shared_ptr<engine::Camera> t_camera,
+// 	std::vector<std::shared_ptr<engine::Light>> t_lights) {
+// 	auto shader = t_app.UseShaderProgram("phong", t_camera, t_lights);
+// 	t_scene.AddObject("tree", std::make_unique<engine::DrawableObject>
+// 		(tree, shader, sizeof(tree), float{}, 3, float{}, 3));
+// 	t_scene.AddObject("bushes", std::make_unique<engine::DrawableObject>
+// 		(bushes, shader, sizeof(bushes), float{}, 3, float{}, 3));
+// 	GenerateRandomObjects(t_scene, "tree", 150);
+// 	GenerateRandomObjects(t_scene, "bushes", 80);
+// 	t_scene.AddTexture("tree", {"../res/textures/wooden_fence.png"});
+// 	t_scene.AddTexture("bushes", {"../res/textures/wooden_fence.png"});
+// }
+//
+// void InitGift(engine::Application& t_app, engine::Scene& t_scene, std::shared_ptr<engine::Camera> t_camera,
+// std::vector<std::shared_ptr<engine::Light>> t_lights) {
+// 	auto shader = t_app.UseShaderProgram("phong", t_camera, t_lights);
+// 	t_scene.AddObject("gift", std::make_unique<engine::DrawableObject>
+// 		(gift, shader, sizeof(gift), float{}, 3, float{}, 3));
+// }
+//
+// void InitTriangle(engine::Application& t_app, engine::Scene& t_scene, std::shared_ptr<engine::Camera> t_camera,
+// std::vector<std::shared_ptr<engine::Light>> t_lights) {
+// 	auto shader = t_app.UseShaderProgram("phong", t_camera, t_lights);
+// 	t_scene.AddObject("triangle", std::make_unique<engine::DrawableObject>
+// 		(points, shader, sizeof(points), float{}, 3, float{}, 3, float{}, 2));
+//
+// 	auto transformation = engine::Transformation({
+// 			{0.0f, 1.0f, 10.0f},
+// 			{0.0f, 1.0f, 0.0f},
+// 			{0.1f, 0.1f, 0.1f},
+// 			0,
+// 			engine::TransformationOrder::RTS
+// 		});
+//
+// 	t_scene.AddTransformation("triangle", transformation);
+//
+// 	t_scene.AddTexture("triangle", {"../res/textures/wooden_fence.png"});
+// }
 
-void InitGift(engine::Application& t_app, engine::Scene& t_scene, std::shared_ptr<engine::Camera> t_camera,
+void InitHouse(engine::Application& t_app, engine::Scene& t_scene, std::shared_ptr<engine::Camera> t_camera,
 std::vector<std::shared_ptr<engine::Light>> t_lights) {
 	auto shader = t_app.UseShaderProgram("phong", t_camera, t_lights);
-	t_scene.AddObject("gift", std::make_unique<engine::DrawableObject>
-		(gift, shader, sizeof(gift), float{}, 3, float{}, 3));
-}
-
-void InitTriangle(engine::Application& t_app, engine::Scene& t_scene, std::shared_ptr<engine::Camera> t_camera,
-std::vector<std::shared_ptr<engine::Light>> t_lights) {
-	auto shader = t_app.UseShaderProgram("phong", t_camera, t_lights);
-	t_scene.AddObject("triangle", std::make_unique<engine::DrawableObject>
-		(points, shader, sizeof(points), float{}, 3, float{}, 3, float{}, 2));
+	t_scene.AddObjectWithTexture("house", "../res/models/house.obj", shader);
 
 	auto transformation = engine::Transformation({
 			{0.0f, 1.0f, 10.0f},
@@ -96,9 +114,9 @@ std::vector<std::shared_ptr<engine::Light>> t_lights) {
 			engine::TransformationOrder::RTS
 		});
 
-	t_scene.AddTransformation("triangle", transformation);
+	t_scene.AddTransformation("house", transformation);
 
-	t_scene.AddTexture("triangle", {"../res/textures/wooden_fence.png"});
+	t_scene.AddTexture("house", {"../res/textures/house.png"});
 }
 
 void GenerateFireFlights(engine::Application& t_app, std::vector<std::shared_ptr<engine::Light>>& t_lights, const std::vector<glm::vec3>& t_positions) {
@@ -116,25 +134,25 @@ void GenerateFireFlights(engine::Application& t_app, std::vector<std::shared_ptr
 	}
 }
 
-void InitSpehre(engine::Application& t_app, engine::Scene& t_scene, std::shared_ptr<engine::Camera> t_camera,
-	std::vector<std::shared_ptr<engine::Light>>& t_lights, const std::vector<glm::vec3>& t_positions) {
-	auto shader = t_app.UseShaderProgram("phong", t_camera, t_lights);
-	t_scene.AddObject("sphere", std::make_unique<engine::DrawableObject>
-		(sphere, shader, sizeof(sphere), float{}, 3, float{}, 3));
-
-	for (const auto& position : t_positions) {
-
-		auto transformation = engine::Transformation({
-			position,
-			{0.0f, 1.0f, 0.0f},
-			{0.1f, 0.1f, 0.1f},
-			0,
-			engine::TransformationOrder::RTS
-		});
-
-		t_scene.AddTransformation("sphere", transformation);
-	}
-}
+// void InitSpehre(engine::Application& t_app, engine::Scene& t_scene, std::shared_ptr<engine::Camera> t_camera,
+// 	std::vector<std::shared_ptr<engine::Light>>& t_lights, const std::vector<glm::vec3>& t_positions) {
+// 	auto shader = t_app.UseShaderProgram("phong", t_camera, t_lights);
+// 	t_scene.AddObject("sphere", std::make_unique<engine::DrawableObject>
+// 		(sphere, shader, sizeof(sphere), float{}, 3, float{}, 3));
+//
+// 	for (const auto& position : t_positions) {
+//
+// 		auto transformation = engine::Transformation({
+// 			position,
+// 			{0.0f, 1.0f, 0.0f},
+// 			{0.1f, 0.1f, 0.1f},
+// 			0,
+// 			engine::TransformationOrder::RTS
+// 		});
+//
+// 		t_scene.AddTransformation("sphere", transformation);
+// 	}
+// }
 
 int main() {
 	engine::Application app(800, 600, "ZPG");
@@ -148,10 +166,11 @@ int main() {
 	auto camera = app.CreateCamera(position, depth);
 
 	engine::DirectionalLightParams_t light_params{
-		{-0.2f, -1.0f, -0.3f},
-		{0.02f, 0.02f, 0.02f},
-		{0.1f, 0.1f, 0.1f},
-		{0.5f, 0.5f, 0.5f}
+		{0.2f, 1.0f, 0.3f},
+		{0.9f, 0.9f, 0.9f},
+		{0.5f, 0.5f, 0.5f},
+		{1.0f, 1.0f, 1.0f}
+
 	};
 
 	engine::FlashLightParams_t flashLightParams {
@@ -173,16 +192,19 @@ int main() {
 
 	app.CreateShaderProgram("phong", "../res/shaders/phong_vertex.glsl", "../res/shaders/multiple_lights_fragment.glsl");
 
-	auto forest = app.CreateScene();
+	// auto forest = app.CreateScene();
 	// auto gift = app.CreateScene();
 	// auto sphere = app.CreateScene();
 	//
-	InitForest(app, forest, camera, lights);
+	// InitForest(app, forest, camera, lights);
 	// InitGift(app, gift, camera, lights);
 	// InitSpehre(app, sphere, camera, lights, positions);
 
-	auto triangle = app.CreateScene();
-	InitTriangle(app, triangle, camera, lights);
+	// auto triangle = app.CreateScene();
+	// InitTriangle(app, triangle, camera, lights);
+
+	auto house = app.CreateScene();
+	InitHouse(app, house, camera, lights);
 
 	float alpha = 0.0f;
 	while (app.Run()) {
@@ -199,11 +221,12 @@ int main() {
 		//
 		// gift.AddTransformation("gift", transformation);
 		//
-		forest.DrawScene();
+		// forest.DrawScene();
 		// gift.DrawScene();
 		// sphere.DrawScene();
 
-		triangle.DrawScene();
+		// triangle.DrawScene();
+		house.DrawScene();
 	}
 	return 0;
 }

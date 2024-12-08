@@ -8,22 +8,32 @@
 namespace engine {
 void Scene::DrawScene() {
 	for (const auto& [key, value] : m_objects) {
-		value->Draw();
+		value->drawable_object->Draw(*value->index_buffer);
 	}
 }
 
 void Scene::ClearScene() {
 	for (auto& [key, value] : m_objects) {
-		value->Clear();
+		value->drawable_object->Clear();
 	}
 }
 
-void Scene::AddObject(const std::string& t_name, std::unique_ptr<DrawableObject> t_drawable_object) {
+void Scene::AddObjectWithTexture(const std::string& t_name, const std::string& t_path,
+	const std::shared_ptr<ShaderProgram>& t_shader) {
+	auto mesh = m_model_loader.Load(t_path);
+	auto drawable_obj = std::make_unique<DrawableObject>(mesh->vertices.data(), t_shader,
+		sizeof(mesh->vertices.data()->params) * mesh->vertices.size(), float{}, 3, float{}, 3, float{}, 2, float{}, 3);
+	auto indexes = std::make_unique<IndexBuffer>(mesh->indices.data(), mesh->indices.size());
+
+	AddObject(t_name, std::make_unique<Object_t>(std::move(drawable_obj), std::move(indexes)));
+}
+
+void Scene::AddObject(const std::string& t_name, std::unique_ptr<Object_t> t_drawable_object) {
 	m_objects.emplace(t_name, std::move(t_drawable_object));
 }
 
 void Scene::AddTexture(const std::string& t_object_name, std::initializer_list<std::string> t_paths) {
-	m_objects.at(t_object_name)->AddTexture(t_paths);
+	m_objects.at(t_object_name)->drawable_object->AddTexture(t_paths);
 }
 
 bool Scene::RemoveObject(const std::string& t_name) {
@@ -43,11 +53,11 @@ void Scene::AddTransformation(const std::string& t_name, const Transformation& t
 
 	switch (mode) {
 	case TransformationOrder::TRS:
-		m_objects.at(t_name)->AddTransformation({std::move(translate), std::move(rotate), std::move(scale)});
+		m_objects.at(t_name)->drawable_object->AddTransformation({std::move(translate), std::move(rotate), std::move(scale)});
 		break;
 
 	case TransformationOrder::RTS:
-		m_objects.at(t_name)->AddTransformation({std::move(rotate), std::move(translate), std::move(scale)});
+		m_objects.at(t_name)->drawable_object->AddTransformation({std::move(rotate), std::move(translate), std::move(scale)});
 		break;
 
 	default:

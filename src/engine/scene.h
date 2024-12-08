@@ -1,4 +1,6 @@
 #pragma once
+#include <model_loader.h>
+
 #include "drawable_object.h"
 
 namespace engine {
@@ -16,6 +18,11 @@ struct Transformation {
 	TransformationOrder order;
 };
 
+struct Object_t {
+	std::unique_ptr<DrawableObject> drawable_object;
+	std::unique_ptr<IndexBuffer> index_buffer;
+};
+
 class Scene {
 public:
 	Scene() = default;
@@ -23,13 +30,16 @@ public:
 
 	void DrawScene();
 	void ClearScene();
-	void AddObject(const std::string& t_name, std::unique_ptr<DrawableObject> t_drawable_object);
+	void AddObjectWithTexture(const std::string& t_name, const std::string& t_path, const std::shared_ptr<ShaderProgram>& t_shader);
 	void AddTexture(const std::string& t_object_name, std::initializer_list<std::string> t_paths);
 	bool RemoveObject(const std::string& t_name);
 	void AddTransformation(const std::string& t_name, const Transformation& t_transformation);
 
 private:
-	std::unordered_map<std::string, std::unique_ptr<DrawableObject>> m_objects;
+	void AddObject(const std::string& t_name, std::unique_ptr<Object_t> t_drawable_object);
+
+	std::unordered_map<std::string, std::unique_ptr<Object_t>> m_objects;
+	ModelLoader m_model_loader {};
 };
 
 }

@@ -28,10 +28,12 @@ void Texture::Load(const std::string& t_path) {
 	std::string extension = t_path.substr(extensionPos + 1);
 	std::ranges::transform(extension, extension.begin(), ::tolower);
 	if (extension == "png") {
-		m_renderer_ID = SOIL_load_OGL_texture(t_path.c_str(), SOIL_LOAD_RGBA, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		m_renderer_ID = SOIL_load_OGL_texture(t_path.c_str(),
+			SOIL_LOAD_RGBA, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y | SOIL_FLAG_MIPMAPS);
 	}
 	else if (extension == "jpg" || extension == "jpeg") {
-		m_renderer_ID = SOIL_load_OGL_texture(t_path.c_str(), SOIL_LOAD_RGB, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		m_renderer_ID = SOIL_load_OGL_texture(t_path.c_str(),
+			SOIL_LOAD_RGB, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y | SOIL_FLAG_MIPMAPS);
 	}
 
 	if (m_renderer_ID == NULL) {
