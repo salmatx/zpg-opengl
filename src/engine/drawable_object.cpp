@@ -16,6 +16,7 @@ DrawableObject& DrawableObject::operator=(const DrawableObject& t_other) {
 	DrawableObject tmp(t_other);
 	std::swap(m_model, tmp.m_model);
 	std::swap(m_transformations, tmp.m_transformations);
+	std::swap(m_shader, tmp.m_shader);
 
 	return *this;
 }
@@ -34,11 +35,15 @@ void DrawableObject::AddTransformation(std::unique_ptr<ModelTransformation>(&& t
 	}
 }
 
+void DrawableObject::AddTexture(std::initializer_list<std::string> t_paths) {
+	m_textures = new Textures(t_paths);
+}
+
 /// Draw array using indices
 /// @param t_ibo
 /// @param t_shader
-void DrawableObject::Draw(const IndexBuffer& t_ibo, std::shared_ptr<ShaderProgram> t_shader) const {
-	t_shader->Bind();
+void DrawableObject::Draw(const IndexBuffer& t_ibo) const {
+	m_shader->Bind();
 	m_model->Bind();
 	t_ibo.Bind();
 
@@ -47,7 +52,7 @@ void DrawableObject::Draw(const IndexBuffer& t_ibo, std::shared_ptr<ShaderProgra
 	for (const auto& transformation : m_transformations) {
 		count++;
 		model = transformation->Transform(model);
-		t_shader->SetUniformMat4f("u_model_matrix", model);
+		m_shader->SetTransformation(model);
 		if (count == 3) {
 			GLCall(glDrawElements(GL_TRIANGLES, t_ibo.GetCount(), GL_UNSIGNED_INT, nullptr));
 			model = glm::mat4(1.0f);
@@ -58,8 +63,8 @@ void DrawableObject::Draw(const IndexBuffer& t_ibo, std::shared_ptr<ShaderProgra
 
 /// Draw whole array without using indices
 /// @param t_shader
-void DrawableObject::Draw(std::shared_ptr<ShaderProgram> t_shader) const {
-	t_shader->Bind();
+void DrawableObject::Draw() const {
+	m_shader->Bind();
 	m_model->Bind();
 
 	glm::mat4 model = glm::mat4(1.0f);
@@ -67,12 +72,18 @@ void DrawableObject::Draw(std::shared_ptr<ShaderProgram> t_shader) const {
 	for (const auto& transformation : m_transformations) {
 		count++;
 		model = transformation->Transform(model);
-		t_shader->SetUniformMat4f("u_model_matrix", model);
+		m_shader->SetTransformation(model);
 		if (count == 3) {
 			GLCall(glDrawArrays(GL_TRIANGLES, 0, m_model->GetCount()));
 			model = glm::mat4(1.0f);
 			count = 0;
 		}
+	}
+
+	auto text_count = m_textures->GetCount();
+	m_shader->Bind();
+	for (int i = 0; i < text_count; ++i) {
+		m_shader->SetTexture(i);
 	}
 }
 

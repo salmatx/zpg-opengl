@@ -11,7 +11,7 @@ class Application {
 public:
 	Application(int t_scr_width, int t_scr_height, std::string t_title);
 	~Application() = default;
-	void UseShaderProgram(Scene& t_scene, const std::string& t_name, std::shared_ptr<Camera> t_camera,
+	std::shared_ptr<ShaderProgram> UseShaderProgram(const std::string& t_name, std::shared_ptr<Camera> t_camera,
 		std::vector<std::shared_ptr<Light>> t_lights);
 	void RemoveShaderProgram(const std::string& t_name);
 	std::shared_ptr<Camera> CreateCamera(const CameraPosition& t_position, const CameraDepth& t_depth);

@@ -35,6 +35,14 @@ void ShaderProgram::Unbind() const {
 	GLCall(glUseProgram(0));
 }
 
+void ShaderProgram::SetTransformation(const glm::mat4& t_model) {
+	SetUniformMat4f("u_model_matrix", t_model);
+}
+
+void ShaderProgram::SetTexture(int t_index) {
+	SetUniform1i("u_texture", t_index);
+}
+
 void ShaderProgram::SetUniform4f(const std::string& t_name, float t_v0, float t_v1, float t_v2, float t_v3) {
 	GLCall(const int location = this->GetUniformLocation(t_name));
 	GLCall(glUniform4f(location, t_v0, t_v1, t_v2, t_v3));

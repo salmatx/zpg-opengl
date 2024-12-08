@@ -16,7 +16,8 @@ public:
 
 	void Bind() const override;
 	void Unbind() const override;
-	void SetUniformMat4f(const std::string& t_name, const glm::mat4& t_matrix) override;
+	void SetTransformation(const glm::mat4& t_model);
+	void SetTexture(int t_index);
 	void LoadShader(const std::string& t_filepath);
 	void CreateShaderProgram();
 
@@ -32,6 +33,7 @@ private:
 	int GetUniformLocation(const std::string& t_name);
 	std::optional<unsigned int> CompileShaderProgram(unsigned int t_type, const std::string& t_source);
 	void SetNumberOfLights();
+	void SetUniformMat4f(const std::string& t_name, const glm::mat4& t_matrix) override;
 	void SetUniform4f(const std::string& t_name, float t_v0, float t_v1, float t_v2, float t_v3) override;
 	void SetUniform3f(const std::string& t_name, const glm::vec3& t_vector);
 	void SetUniform1f(const std::string& t_name, float t_param);

@@ -47,6 +47,15 @@ uniform PointLight u_pointLights[MAX_POINT_LIGHTS];
 uniform int u_flashLights_count;
 uniform FlashLight u_flashLights[MAX_FLASH_LIGHTS];
 
+uniform sampler2D u_texture;
+uniform vec3 u_view_position;
+
+in vec3 v_normal;
+in vec3 v_frag_pos;
+in vec2 v_tex_coords;
+
+out vec4 frag_color;
+
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
 {
     vec3 lightDir = normalize(-light.direction);
@@ -110,13 +119,6 @@ vec3 CalcFlashLight(FlashLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     return (ambient + diffuse + specular);
 }
 
-in vec3 v_normal;
-in vec3 v_frag_pos;
-
-uniform vec3 u_view_position;
-
-out vec4 frag_color;
-
 void main() {
     vec3 view_dir = normalize(u_view_position - v_frag_pos);
     vec3 normal = normalize(v_normal);
@@ -131,5 +133,8 @@ void main() {
     for (int i = 0; i < u_flashLights_count; ++i) {
         result += CalcFlashLight(u_flashLights[i], normal, v_frag_pos, view_dir);
     }
-    frag_color = vec4(result, 1.0);
+
+    vec4 texColor = texture(u_texture, v_tex_coords);
+
+    frag_color = vec4(result, 1.0) * texColor;
 }

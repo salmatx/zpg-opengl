@@ -13,12 +13,11 @@ Application::Application(int t_scr_width, int t_scr_height, std::string t_title)
 	m_window->SetKeyCallbacks();
 }
 
-void Application::UseShaderProgram(Scene& t_scene, const std::string& t_name, std::shared_ptr<Camera> t_camera,
+std::shared_ptr<ShaderProgram> Application::UseShaderProgram(const std::string& t_name, std::shared_ptr<Camera> t_camera,
 	std::vector<std::shared_ptr<Light>>t_lights) {
 	auto it = m_shader_programs.find(t_name);
 	if (it != m_shader_programs.end()) {
-		t_scene.SetShaderProgram(it->second);
-		return;
+		return it->second;
 	}
 
 	auto path_iter = m_shader_paths.find(t_name);
@@ -29,12 +28,13 @@ void Application::UseShaderProgram(Scene& t_scene, const std::string& t_name, st
 		}
 		shader->CreateShaderProgram();
 		m_shader_programs[t_name] = shader;
-		t_scene.SetShaderProgram(shader);
 		t_camera->InitCamera();
 		for (auto& light : t_lights) {
 			light->InitLight();
 		}
+		return m_shader_programs.at(t_name);
 	}
+	return nullptr;
 }
 
 void Application::RemoveShaderProgram(const std::string& t_name) {

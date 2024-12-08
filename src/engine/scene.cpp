@@ -8,7 +8,7 @@
 namespace engine {
 void Scene::DrawScene() {
 	for (const auto& [key, value] : m_objects) {
-		value->Draw(m_shader);
+		value->Draw();
 	}
 }
 
@@ -18,8 +18,12 @@ void Scene::ClearScene() {
 	}
 }
 
-void Scene::AddObject(const std::string& t_name, const DrawableObject& t_drawable_object) {
-	m_objects.emplace(t_name, std::make_unique<DrawableObject>(t_drawable_object));
+void Scene::AddObject(const std::string& t_name, std::unique_ptr<DrawableObject> t_drawable_object) {
+	m_objects.emplace(t_name, std::move(t_drawable_object));
+}
+
+void Scene::AddTexture(const std::string& t_object_name, std::initializer_list<std::string> t_paths) {
+	m_objects.at(t_object_name)->AddTexture(t_paths);
 }
 
 bool Scene::RemoveObject(const std::string& t_name) {
@@ -49,9 +53,5 @@ void Scene::AddTransformation(const std::string& t_name, const Transformation& t
 	default:
 		break;
 	}
-}
-
-void Scene::SetShaderProgram(std::shared_ptr<ShaderProgram> t_shader) {
-	m_shader = std::move(t_shader);
 }
 }

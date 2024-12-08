@@ -23,14 +23,13 @@ public:
 
 	void DrawScene();
 	void ClearScene();
-	void AddObject(const std::string& t_name, const DrawableObject& t_drawable_object);
+	void AddObject(const std::string& t_name, std::unique_ptr<DrawableObject> t_drawable_object);
+	void AddTexture(const std::string& t_object_name, std::initializer_list<std::string> t_paths);
 	bool RemoveObject(const std::string& t_name);
 	void AddTransformation(const std::string& t_name, const Transformation& t_transformation);
-	void SetShaderProgram(std::shared_ptr<ShaderProgram> t_shader);
 
 private:
 	std::unordered_map<std::string, std::unique_ptr<DrawableObject>> m_objects;
-	std::shared_ptr<ShaderProgram> m_shader;
 };
 
 }
