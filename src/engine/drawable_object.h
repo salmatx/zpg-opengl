@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cubemap.h>
 #include <textures.h>
 
 #include "index_buffer.h"
@@ -27,6 +28,7 @@ public:
 	void AddTransformation(std::unique_ptr<ModelTransformation> (& t_transformation)[3]);
 	void AddTransformation(std::unique_ptr<ModelTransformation> (&& t_transformation)[3]);
 	void AddTexture(std::initializer_list<std::string> t_paths);
+	void AddCubeMap(std::initializer_list<std::string> t_paths);
 	void Draw(const IndexBuffer& t_ibo) const;
 	void Draw() const;
 	void Clear();
@@ -36,6 +38,7 @@ private:
 	std::vector<std::unique_ptr<ModelTransformation>> m_transformations;
 	std::shared_ptr<ShaderProgram> m_shader;
 	Textures* m_textures = nullptr;
+	Cubemap* m_cubemap = nullptr;
 };
 
 }

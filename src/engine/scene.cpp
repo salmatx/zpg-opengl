@@ -8,8 +8,21 @@
 namespace engine {
 void Scene::DrawScene() {
 	for (const auto& [key, value] : m_objects) {
-		value->drawable_object->Draw(*value->index_buffer);
+		if (value->index_buffer->GetCount() > 0)
+			value->drawable_object->Draw(*value->index_buffer);
+		else
+			value->drawable_object->Draw();
 	}
+}
+
+void Scene::DrawSkybox() {
+	glDepthFunc(GL_LEQUAL);
+	glDepthMask(GL_FALSE);
+	for (const auto& [key, value] : m_objects) {
+			value->drawable_object->Draw();
+	}
+	glDepthMask(GL_TRUE);
+	glDepthFunc(GL_LESS);
 }
 
 void Scene::ClearScene() {
@@ -28,12 +41,21 @@ void Scene::AddObjectWithTexture(const std::string& t_name, const std::string& t
 	AddObject(t_name, std::make_unique<Object_t>(std::move(drawable_obj), std::move(indexes)));
 }
 
+void Scene::AddObjectWithoutTexture(const std::string& t_name, std::unique_ptr<DrawableObject> t_drawable_object) {
+	auto indexes = std::make_unique<IndexBuffer>(nullptr, 0);
+	AddObject(t_name, std::make_unique<Object_t>(std::move(t_drawable_object), std::move(indexes)));
+}
+
 void Scene::AddObject(const std::string& t_name, std::unique_ptr<Object_t> t_drawable_object) {
 	m_objects.emplace(t_name, std::move(t_drawable_object));
 }
 
 void Scene::AddTexture(const std::string& t_object_name, std::initializer_list<std::string> t_paths) {
 	m_objects.at(t_object_name)->drawable_object->AddTexture(t_paths);
+}
+
+void Scene::AddCubeMap(const std::string& t_object_name, std::initializer_list<std::string> t_paths) {
+	m_objects.at(t_object_name)->drawable_object->AddCubeMap(t_paths);
 }
 
 bool Scene::RemoveObject(const std::string& t_name) {

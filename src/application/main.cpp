@@ -7,6 +7,7 @@
 #include "bushes.h"
 #include "gift.h"
 #include "sphere.h"
+#include "skycube.h"
 
 using RandGenType = std::mt19937_64;
 
@@ -107,9 +108,9 @@ std::vector<std::shared_ptr<engine::Light>> t_lights) {
 	t_scene.AddObjectWithTexture("house", "../res/models/house.obj", shader);
 
 	auto transformation = engine::Transformation({
-			{0.0f, 1.0f, 10.0f},
+			{0.0f, 0.0f, 10.0f},
 			{0.0f, 1.0f, 0.0f},
-			{0.1f, 0.1f, 0.1f},
+			{0.8f, 0.8f, 0.8f},
 			0,
 			engine::TransformationOrder::RTS
 		});
@@ -117,6 +118,32 @@ std::vector<std::shared_ptr<engine::Light>> t_lights) {
 	t_scene.AddTransformation("house", transformation);
 
 	t_scene.AddTexture("house", {"../res/textures/house.png"});
+}
+
+void InitSkycube(engine::Application& t_app, engine::Scene& t_scene, std::shared_ptr<engine::Camera> t_camera,
+std::vector<std::shared_ptr<engine::Light>> t_lights) {
+	t_app.CreateShaderProgram("skycube", "../res/shaders/skycube_vertex.glsl", "../res/shaders/skycube_fragment.glsl");
+	auto shader = t_app.UseShaderProgram("skycube", t_camera, t_lights);
+	t_scene.AddObjectWithoutTexture("skycube",
+		std::make_unique<engine::DrawableObject>(skycube, shader, sizeof(skycube), float{}, 3));
+
+	auto transformation = engine::Transformation({
+			{0.0f, 0.0f, 0.0f},
+			{1.0f, 1.0f, 1.0f},
+			{0.2f, 0.2f, 0.2f},
+			0,
+			engine::TransformationOrder::TRS
+		});
+
+	t_scene.AddTransformation("skycube", transformation);
+
+	t_scene.AddCubeMap("skycube",
+{"../res/textures/cubemap/posx.jpg",
+		"../res/textures/cubemap/negx.jpg",
+		"../res/textures/cubemap/posy.jpg",
+		"../res/textures/cubemap/negy.jpg",
+		"../res/textures/cubemap/posz.jpg",
+		"../res/textures/cubemap/negz.jpg"});
 }
 
 void GenerateFireFlights(engine::Application& t_app, std::vector<std::shared_ptr<engine::Light>>& t_lights, const std::vector<glm::vec3>& t_positions) {
@@ -159,7 +186,7 @@ int main() {
 
 	engine::CameraDepth depth{0.1f, 100.0f};
 	engine::CameraPosition position{
-		{0.0f, 1.0f, 10.0f},
+		{0.0f, 1.0f, 0.0f},
 		{0.0f, 0.0f, -1.0f},
 		{0.0f, 1.0f, 0.0f}
 	};
@@ -192,6 +219,9 @@ int main() {
 
 	app.CreateShaderProgram("phong", "../res/shaders/phong_vertex.glsl", "../res/shaders/multiple_lights_fragment.glsl");
 
+	auto skycube = app.CreateScene();
+	InitSkycube(app, skycube, camera, lights);
+
 	// auto forest = app.CreateScene();
 	// auto gift = app.CreateScene();
 	// auto sphere = app.CreateScene();
@@ -208,6 +238,8 @@ int main() {
 
 	float alpha = 0.0f;
 	while (app.Run()) {
+		skycube.DrawSkybox();
+		// glClear ( GL_DEPTH_BUFFER_BIT );
 		// gift.ClearScene();
 		//
 		// alpha += 1.0f;

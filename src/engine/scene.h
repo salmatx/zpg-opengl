@@ -29,9 +29,12 @@ public:
 	~Scene() = default;
 
 	void DrawScene();
+	void DrawSkybox();
 	void ClearScene();
 	void AddObjectWithTexture(const std::string& t_name, const std::string& t_path, const std::shared_ptr<ShaderProgram>& t_shader);
+	void AddObjectWithoutTexture(const std::string& t_name, std::unique_ptr<DrawableObject> t_drawable_object);
 	void AddTexture(const std::string& t_object_name, std::initializer_list<std::string> t_paths);
+	void AddCubeMap(const std::string& t_object_name, std::initializer_list<std::string> t_paths);
 	bool RemoveObject(const std::string& t_name);
 	void AddTransformation(const std::string& t_name, const Transformation& t_transformation);
 

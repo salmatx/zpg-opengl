@@ -1,5 +1,8 @@
 #include "epch.h"
 #include "drawable_object.h"
+
+#include <cubemap.h>
+
 #include "gl_common.h"
 #include "model_translate.h"
 
@@ -37,6 +40,10 @@ void DrawableObject::AddTransformation(std::unique_ptr<ModelTransformation>(&& t
 
 void DrawableObject::AddTexture(std::initializer_list<std::string> t_paths) {
 	m_textures = new Textures(t_paths);
+}
+
+void DrawableObject::AddCubeMap(std::initializer_list<std::string> t_paths) {
+	m_cubemap = new Cubemap(t_paths);
 }
 
 /// Draw array using indices
@@ -80,7 +87,13 @@ void DrawableObject::Draw() const {
 		}
 	}
 
-	auto text_count = m_textures->GetCount();
+	auto text_count = 0;
+	if (m_textures != nullptr) {
+		text_count = m_textures->GetCount();
+	}
+	else if (m_cubemap != nullptr) {
+		text_count = m_cubemap->GetCount();
+	}
 	m_shader->Bind();
 	for (int i = 0; i < text_count; ++i) {
 		m_shader->SetTexture(i);
