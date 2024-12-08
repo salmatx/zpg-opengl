@@ -52,6 +52,7 @@ void Camera::Notify() {
 }
 
 void Camera::Update(EventType t_event, std::shared_ptr<const void> t_event_data) {
+	auto y_pos = m_camera_position.y;
 	switch (t_event) {
 	case EventType::key: {
 		auto key_event = std::static_pointer_cast<const KeyEvent>(t_event_data);
@@ -65,6 +66,7 @@ void Camera::Update(EventType t_event, std::shared_ptr<const void> t_event_data)
 		if (key_event->key == GLFW_KEY_D)
 			m_camera_position += glm::normalize(glm::cross(m_camera_front, m_camera_up)) * camera_speed;
 
+		m_camera_position.y = y_pos;
 		break;
 	}
 	case EventType::mouse: {
