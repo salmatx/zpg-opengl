@@ -4,8 +4,9 @@
 #include <algorithm>
 
 namespace engine {
-Texture::Texture(const std::string& t_path, int t_index) {
-	GLCall(glActiveTexture(GL_TEXTURE0 + t_index));
+Texture::Texture(const std::string& t_path, int t_index)
+	: m_index(t_index) {
+	GLCall(glActiveTexture(GL_TEXTURE0 + m_index));
 	Load(t_path);
 	Texture::Bind();
 }
@@ -15,6 +16,7 @@ void Texture::Bind() const {
 }
 
 void Texture::Unbind() const {
+	GLCall(glActiveTexture(GL_TEXTURE0 + m_index));
 	GLCall(glBindTexture(GL_TEXTURE_2D, 0));
 }
 

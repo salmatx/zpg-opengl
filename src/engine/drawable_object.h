@@ -37,8 +37,8 @@ private:
     std::shared_ptr<Model> m_model;
 	std::vector<std::unique_ptr<ModelTransformation>> m_transformations;
 	std::shared_ptr<ShaderProgram> m_shader;
-	Textures* m_textures = nullptr;
-	Cubemap* m_cubemap = nullptr;
+	std::unique_ptr<Textures> m_textures = nullptr;
+	std::unique_ptr<Cubemap> m_cubemap = nullptr;
 };
 
 }

@@ -16,6 +16,7 @@ private:
 	void Load(const std::string& t_path);
 
 	unsigned int m_renderer_ID {};
+	int m_index {};
 };
 
 }

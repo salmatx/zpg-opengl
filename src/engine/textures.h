@@ -6,10 +6,13 @@
 
 namespace engine {
 
-class Textures {
+class Textures : public IBind {
 public:
 	Textures(std::initializer_list<std::string> t_paths);
 	[[nodiscard]] int GetCount() const {return m_count;}
+
+	void Bind() const;
+	void Unbind() const;
 
 private:
 	std::array<std::unique_ptr<Texture>, 16> m_textures;

@@ -17,21 +17,6 @@ std::uniform_real_distribution uniform_position(-50.0f, 50.0f);
 std::uniform_real_distribution uniform_rotation(0.0f, 100.0f);
 std::uniform_real_distribution uniform_scale(0.6f, 1.2f);
 
-float points[] = {
-0.000000f, -0.500000f, 0.500000f, -0.872900f, 0.218200f, 0.436400f, 0.836598f, 0.477063f,
-0.000000f, 0.500000f, 0.000000f, -0.872900f, 0.218200f, 0.436400f, 0.399527f, 0.286309f,
--0.500000f, -0.500000f, -0.500000f, -0.872900f, 0.218200f, 0.436400f, 0.836598f, 0.000179f,
--0.500000f, -0.500000f, -0.500000f, 0.000000f, -1.000000f, 0.000000f, 0.381686f, 0.999821f,
-0.500000f, -0.500000f, -0.500000f, 0.000000f, -1.000000f, 0.000000f, 0.000179f, 0.809067f,
-0.000000f, -0.500000f, 0.500000f, 0.000000f, -1.000000f, 0.000000f, 0.381686f, 0.522937f,
-0.500000f, -0.500000f, -0.500000f, 0.872900f, 0.218200f, 0.436400f, 0.399169f, 0.000179f,
-0.000000f, 0.500000f, 0.000000f, 0.872900f, 0.218200f, 0.436400f, 0.399169f, 0.522579f,
-0.000000f, -0.500000f, 0.500000f, 0.872900f, 0.218200f, 0.436400f, 0.000179f, 0.261379f,
--0.500000f, -0.500000f, -0.500000f, 0.000000f, 0.447200f, -0.894400f, 0.788901f, 0.477421f,
-0.000000f, 0.500000f, 0.000000f, 0.000000f, 0.447200f, -0.894400f, 0.788901f, 0.999821f,
-0.500000f, -0.500000f, -0.500000f, 0.000000f, 0.447200f, -0.894400f, 0.399527f, 0.651554f
-};
-
 static void GenerateRandomObjects(engine::Scene& t_scene, const std::string& t_name, const int t_count) {
 	for (int i = 0; i < t_count; ++i) {
 		float x_pos = uniform_position(rand_gen);
@@ -118,6 +103,42 @@ std::vector<std::shared_ptr<engine::Light>> t_lights) {
 	t_scene.AddTransformation("house", transformation);
 
 	t_scene.AddTexture("house", {"../res/textures/house.png"});
+}
+
+void InitGround(engine::Application& t_app, engine::Scene& t_scene, std::shared_ptr<engine::Camera> t_camera,
+std::vector<std::shared_ptr<engine::Light>> t_lights) {
+	auto shader = t_app.UseShaderProgram("phong", t_camera, t_lights);
+	t_scene.AddObjectWithTexture("ground", "../res/models/teren.obj", shader);
+
+	auto transformation = engine::Transformation({
+			{0.0f, 0.0f, 10.0f},
+			{0.0f, 1.0f, 0.0f},
+			{2.0f, 2.0f, 2.0f},
+			0,
+			engine::TransformationOrder::RTS
+		});
+
+	t_scene.AddTransformation("ground", transformation);
+
+	t_scene.AddTexture("ground", {"../res/textures/grass.png"});
+}
+
+void InitTree(engine::Application& t_app, engine::Scene& t_scene, std::shared_ptr<engine::Camera> t_camera,
+std::vector<std::shared_ptr<engine::Light>> t_lights) {
+	auto shader = t_app.UseShaderProgram("phong", t_camera, t_lights);
+	t_scene.AddObjectWithTexture("tree", "../res/models/tree.obj", shader);
+
+	auto transformation = engine::Transformation({
+			{0.0f, 0.0f, 10.0f},
+			{0.0f, 1.0f, 0.0f},
+			{0.2f, 0.2f, 0.2f},
+			0,
+			engine::TransformationOrder::TRS
+		});
+
+	t_scene.AddTransformation("tree", transformation);
+
+	t_scene.AddTexture("tree", {"../res/textures/tree.png"});
 }
 
 void InitSkycube(engine::Application& t_app, engine::Scene& t_scene, std::shared_ptr<engine::Camera> t_camera,
@@ -233,10 +254,15 @@ int main() {
 	// auto triangle = app.CreateScene();
 	// InitTriangle(app, triangle, camera, lights);
 
-	auto house = app.CreateScene();
-	InitHouse(app, house, camera, lights);
+	auto ground = app.CreateScene();
+	InitGround(app, ground, camera, lights);
 
-	float alpha = 0.0f;
+	auto house_trees = app.CreateScene();
+	InitHouse(app, house_trees, camera, lights);
+
+	InitTree(app, house_trees, camera, lights);
+
+	// float alpha = 0.0f;
 	while (app.Run()) {
 		skycube.DrawSkybox();
 		// glClear ( GL_DEPTH_BUFFER_BIT );
@@ -258,7 +284,8 @@ int main() {
 		// sphere.DrawScene();
 
 		// triangle.DrawScene();
-		house.DrawScene();
+		ground.DrawScene();
+		house_trees.DrawScene();
 	}
 	return 0;
 }

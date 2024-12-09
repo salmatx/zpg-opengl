@@ -39,11 +39,11 @@ void DrawableObject::AddTransformation(std::unique_ptr<ModelTransformation>(&& t
 }
 
 void DrawableObject::AddTexture(std::initializer_list<std::string> t_paths) {
-	m_textures = new Textures(t_paths);
+	m_textures = std::make_unique<Textures>(t_paths);
 }
 
 void DrawableObject::AddCubeMap(std::initializer_list<std::string> t_paths) {
-	m_cubemap = new Cubemap(t_paths);
+	m_cubemap = std::make_unique<Cubemap>(t_paths);
 }
 
 /// Draw array using indices
@@ -52,6 +52,19 @@ void DrawableObject::Draw(const IndexBuffer& t_ibo) const {
 	m_shader->Bind();
 	m_model->Bind();
 	t_ibo.Bind();
+
+	auto text_count = 0;
+	if (m_textures != nullptr) {
+		text_count = m_textures->GetCount();
+		m_textures->Bind();
+	}
+	else if (m_cubemap != nullptr) {
+		text_count = m_cubemap->GetCount();
+		m_cubemap->Bind();
+	}
+	for (int i = 0; i < text_count; ++i) {
+		m_shader->SetTexture(i);
+	}
 
 	glm::mat4 model = glm::mat4(1.0f);
 	int count = 0;
@@ -72,6 +85,19 @@ void DrawableObject::Draw() const {
 	m_shader->Bind();
 	m_model->Bind();
 
+	auto text_count = 0;
+	if (m_textures != nullptr) {
+		text_count = m_textures->GetCount();
+		m_textures->Bind();
+	}
+	else if (m_cubemap != nullptr) {
+		text_count = m_cubemap->GetCount();
+		m_cubemap->Bind();
+	}
+	for (int i = 0; i < text_count; ++i) {
+		m_shader->SetTexture(i);
+	}
+
 	glm::mat4 model = glm::mat4(1.0f);
 	int count = 0;
 	for (const auto& transformation : m_transformations) {
@@ -83,18 +109,6 @@ void DrawableObject::Draw() const {
 			model = glm::mat4(1.0f);
 			count = 0;
 		}
-	}
-
-	auto text_count = 0;
-	if (m_textures != nullptr) {
-		text_count = m_textures->GetCount();
-	}
-	else if (m_cubemap != nullptr) {
-		text_count = m_cubemap->GetCount();
-	}
-	m_shader->Bind();
-	for (int i = 0; i < text_count; ++i) {
-		m_shader->SetTexture(i);
 	}
 }
 

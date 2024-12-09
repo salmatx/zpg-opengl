@@ -9,4 +9,16 @@ Textures::Textures(std::initializer_list<std::string> t_paths)
 		count++;
 	}
 }
+
+void Textures::Bind() const {
+	for (int i = 0; i < m_count; i++) {
+		m_textures[i]->Bind();
+	}
+}
+
+void Textures::Unbind() const {
+	for (int i = 0; i < m_count; i++) {
+		m_textures[i]->Unbind();
+	}
+}
 }
