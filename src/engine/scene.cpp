@@ -25,6 +25,7 @@ void Scene::DrawSkybox() {
 	glDepthFunc(GL_LESS);
 }
 
+//! This method clears drawn scene. It is used for drawing movable objects in render loop.
 void Scene::ClearScene() {
 	for (auto& [key, value] : m_objects) {
 		value->drawable_object->Clear();

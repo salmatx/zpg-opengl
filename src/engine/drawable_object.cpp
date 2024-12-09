@@ -46,8 +46,8 @@ void DrawableObject::AddCubeMap(std::initializer_list<std::string> t_paths) {
 	m_cubemap = std::make_unique<Cubemap>(t_paths);
 }
 
-/// Draw array using indices
-/// @param t_ibo
+//! Draw array using indices
+//! \param t_ibo
 void DrawableObject::Draw(const IndexBuffer& t_ibo) const {
 	m_shader->Bind();
 	m_model->Bind();
@@ -80,7 +80,7 @@ void DrawableObject::Draw(const IndexBuffer& t_ibo) const {
 	}
 }
 
-/// Draw whole array without using indices
+//! Draw whole array without using indices
 void DrawableObject::Draw() const {
 	m_shader->Bind();
 	m_model->Bind();
