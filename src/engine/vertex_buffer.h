@@ -16,7 +16,7 @@ public:
     [[nodiscard]] inline unsigned int GetSize() const { return m_size; }
 
 private:
-    unsigned int m_renderer_ID;
+    unsigned int m_renderer_ID {};
     unsigned int m_size;
 };
 
