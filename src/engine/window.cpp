@@ -19,7 +19,7 @@ void Window::KeyCallback(GLFWwindow* t_window, int t_key, int t_scancode, int t_
 
 	Window* window = static_cast<Window*>(glfwGetWindowUserPointer(t_window));
 
-	m_event = std::make_shared<KeyEvent>(t_key, m_time_per_frame);
+	m_event = std::make_shared<KeyEvent>(t_key, t_action, m_time_per_frame);
 	window->Notify(EventType::key);
 }
 
@@ -77,24 +77,36 @@ Window::~Window() {
 }
 
 void Window::Attach(EventType t_eventType, IWindowObserver* t_observer) {
-	m_observers[t_eventType] = t_observer;
+	m_observers[t_eventType].emplace_back(t_observer);
 }
 
 void Window::Detach(EventType t_eventType, IWindowObserver* t_observer) {
-	const auto count = std::erase_if(m_observers, [&](const auto& item) {
-		const auto& [key, value] = item;
-		return key == t_eventType && value == t_observer;
-	});
+	auto it = m_observers.find(t_eventType);
 
-	if (count == 0) {
-		std::cerr << "No observers found." << std::endl;
+	if (it != m_observers.end()) {
+		auto& observers = it->second;
+		auto before_size = observers.size();
+
+		observers.erase(std::remove(observers.begin(), observers.end(), t_observer), observers.end());
+
+		if (observers.size() == before_size) {
+			std::cerr << "Observer not found for event type." << std::endl;
+		}
+
+		if (observers.empty()) {
+			m_observers.erase(it);
+		}
+	} else {
+		std::cerr << "Event type not found." << std::endl;
 	}
 }
 
 void Window::Notify(EventType t_event) const {
 	for (const auto& [key, value] : m_observers) {
 		if (key == t_event) {
-			value->Update(t_event, std::move(m_event));
+			for (const auto& observer : value) {
+				observer->Update(t_event, m_event);
+			}
 		}
 	}
 }

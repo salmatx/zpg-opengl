@@ -38,6 +38,8 @@ struct FlashLight {
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
+
+    bool state;
 };
 
 uniform int u_dirLights_count;
@@ -129,7 +131,9 @@ void main() {
         result += CalcPointLight(u_pointLights[i], normal, v_frag_pos, view_dir);
     }
     for (int i = 0; i < u_flashLights_count; ++i) {
-        result += CalcFlashLight(u_flashLights[i], normal, v_frag_pos, view_dir);
+        if (u_flashLights[i].state) {
+            result += CalcFlashLight(u_flashLights[i], normal, v_frag_pos, view_dir);
+        }
     }
 
     vec4 texColor = texture(u_texture, v_tex_coords);

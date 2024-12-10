@@ -142,7 +142,7 @@ void ShaderProgram::Update(const FlashLight& t_light, const CameraParams_t& t_ca
 
 	const int index = std::distance(m_flash_lights.begin(), it);
 	auto [cut_off_angle, outer_cut_off_angle, constant,linear,
-		quadratic,ambient, diffuse, specular] = t_light.GetParams();
+		quadratic,ambient, diffuse, specular, state] = t_light.GetParams();
 
 	const float cut_off = glm::cos(glm::radians(cut_off_angle));
 	const float outer_cut_off = glm::cos(glm::radians(outer_cut_off_angle));
@@ -159,6 +159,7 @@ void ShaderProgram::Update(const FlashLight& t_light, const CameraParams_t& t_ca
 	SetUniform3f(prefix + ".ambient", ambient);
 	SetUniform3f(prefix + ".diffuse", diffuse);
 	SetUniform3f(prefix + ".specular", specular);
+	SetUniform1i(prefix + ".state", state);
 }
 
 void ShaderProgram::RemoveObservation() {

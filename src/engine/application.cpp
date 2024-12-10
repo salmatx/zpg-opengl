@@ -62,7 +62,7 @@ std::shared_ptr<Light> Application::CreatePointLight(const PointLightParams_t& t
 
 std::shared_ptr<Light> Application::CreateFlashLight(const FlashLightParams_t& t_params,
 	std::shared_ptr<Camera> t_camera) {
-	return std::make_shared<FlashLight>(t_params, t_camera);
+	return std::make_shared<FlashLight>(t_params, t_camera, *m_window);
 }
 
 bool Application::Run() {

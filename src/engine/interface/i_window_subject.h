@@ -14,6 +14,7 @@ enum class EventType {
 
 struct KeyEvent {
 	int key;
+	int action;
 	float time;
 };
 

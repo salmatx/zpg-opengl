@@ -51,7 +51,7 @@ void Camera::Notify() {
 	}
 }
 
-void Camera::Update(EventType t_event, std::shared_ptr<const void> t_event_data) {
+void Camera::Update(EventType t_event, const std::shared_ptr<const void>& t_event_data) {
 	auto y_pos = m_camera_position.y;
 	switch (t_event) {
 	case EventType::key: {

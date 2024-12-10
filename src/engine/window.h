@@ -33,7 +33,7 @@ private:
 	void InitGlew() const;
 	void CreateWindow(int t_width, int t_height, const std::string& t_title);
 
-	std::unordered_map<EventType, IWindowObserver*> m_observers;
+	std::unordered_map<EventType, std::vector<IWindowObserver*>> m_observers;
 	GLFWwindow* m_window;
 
 	static float m_time_per_frame;

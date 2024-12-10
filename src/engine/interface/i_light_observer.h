@@ -37,6 +37,8 @@ struct FlashLightParams_t {
 	glm::vec3 ambient;
 	glm::vec3 diffuse;
 	glm::vec3 specular;
+
+	bool state;
 };
 
 struct CameraParams_t {

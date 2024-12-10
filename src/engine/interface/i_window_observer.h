@@ -9,6 +9,6 @@ class IWindowObserver {
 public:
 	virtual ~IWindowObserver() = default;
 
-	virtual void Update(EventType t_event, std::shared_ptr<const void> t_event_data) = 0;
+	virtual void Update(EventType t_event, const std::shared_ptr<const void>& t_event_data) = 0;
 };
 }
