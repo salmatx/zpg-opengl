@@ -14,6 +14,7 @@
 #include <utility>
 #include <type_traits>
 #include <list>
+#include <algorithm>
 
 //Include GLEW
 #include <GL/glew.h>

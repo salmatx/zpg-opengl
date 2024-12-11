@@ -1,7 +1,7 @@
 #include "texture.h"
 
+#include "epch.h"
 #include <gl_common.h>
-#include <algorithm>
 
 namespace engine {
 Texture::Texture(const std::string& t_path, int t_index)
@@ -17,6 +17,7 @@ void Texture::Bind() const {
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
 }
 
 void Texture::Unbind() const {
