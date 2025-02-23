@@ -39,5 +39,5 @@ vcpkg install glew glfw3 glm assimp soil:x64-windows
 Ensure CMake is installed and added to PATH.
 
 
-### Preview images
+## Preview images
 <img src="https://github.com/salmatx/zpg-opengl/blob/main/preview/scene_example.png" width="500" />
