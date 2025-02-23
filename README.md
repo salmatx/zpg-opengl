@@ -40,4 +40,4 @@ Ensure CMake is installed and added to PATH.
 
 
 ### Preview images
-<img src="https://github.com/salmatx/MovieLibrary/blob/master/preview/scene_example.png" width="500" />
+<img src="https://github.com/salmatx/zpg-opengl/blob/main/preview/scene_example.png" width="500" />
